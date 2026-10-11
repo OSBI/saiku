@@ -1,49 +1,71 @@
 name: acceptance
 
-# Runs a PR's `acceptance/<issue>/` specs against a base URL and publishes the
-# result into ci-feedback.json. Ported from spiculedata/saiku-cloud (#1382) and
-# adapted to Saiku's REST surface (docs/acceptance-specs.md).
+# Runs a PR's `acceptance/<issue>/` specs against THAT PR's OWN BUILD and publishes the
+# result into ci-feedback.json. Ported from spiculedata/saiku-cloud (#1382) and adapted
+# to Saiku's REST surface (docs/acceptance-specs.md).
 #
 # The GATE is `ci / acceptance convention` inside ci.yml: a PR that closes issue
-# N must ship acceptance/N/spec.json. This workflow EXECUTES those specs, which
-# needs somewhere to execute them (a deployed Saiku with the FoodMart demo). It is
-# driven by repository variables and degrades honestly: with no
-# `ACCEPTANCE_BASE_URL` configured the specs are recorded `not-run` with a reason,
-# never `pass`, and the job is green.
+# N must ship acceptance/N/spec.json. This workflow EXECUTES those specs. It builds the
+# launcher fat JAR from the PR head (the same command as the `dist` job in ci.yml), starts
+# it inside the runner on 127.0.0.1 with the bundled FoodMart demo (SAIKU_DEMO=true, login
+# admin/admin) and runs every spec against it. The process dies with the job. Running
+# against the deployed demo (demo.saiku.bi) was abandoned: it is not redeployed when
+# `development` moves, so a spec for a fix that is not deployed yet failed on every PR.
 #
-# SECURITY. `pull_request` (never `pull_request_target`), read-only token. The
-# runner executes the PR's own spec files, which is the point, so this job holds
-# nothing but the acceptance account. The target is the PUBLIC demo (demo.saiku.bi),
-# whose login is public (admin/admin), so SAIKU_ACCEPTANCE_USER / _PASSWORD default to
-# it and a fork PR can run login-dependent specs too. To aim acceptance at a PRIVATE
-# instance, set them as repository SECRETS (they override the default, are masked in
-# logs and are withheld from fork PRs, whose login-dependent specs then fail rather
-# than leak); NEVER as repository variables, which are not masked. Only the base URL
-# is a variable. Use a low-privilege account on a disposable or demo instance, never a
-# production admin: a same-repo PR author can read what the job can. The spec commands run with an
-# allow-listed environment and api specs may only talk to the base URL's origin
-# (see the header of .github/scripts/acceptance-runner.mjs).
+# Not built from another workflow's artifact: ci.yml's `dist` job is skipped on UI-only
+# PRs and a fork PR cannot download a sibling run's artifact reliably, whereas this job
+# must run on every PR.
+#
+# SECURITY. `pull_request` (never `pull_request_target`), read-only token. The runner
+# executes the PR's own spec files, which is the point. The launcher listens on loopback
+# only and its login is the public demo pair admin/admin, so there is nothing to keep
+# secret and no repository variable or secret is needed. The one secret used is
+# GH_PACKAGES_TOKEN, to resolve the Maven dependencies hosted on GitHub Packages, exactly
+# as ci.yml does; it is withheld from fork PRs, which then run only the specs that need no
+# server (the api specs are recorded `not-run`, never `pass`). The spec commands run with an
+# allow-listed environment and api specs may only talk to the base URL's origin (see the
+# header of .github/scripts/acceptance-runner.mjs).
+#
+# Escape hatch: a manual run (workflow_dispatch) with `target: deployed` aims the specs at
+# the repository variable ACCEPTANCE_BASE_URL instead. Pull requests always use the local build.
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Where to run the specs: the local build (default) or the deployed ACCEPTANCE_BASE_URL"
+        type: choice
+        options: [local, deployed]
+        default: local
 
 permissions:
   contents: read
 
 concurrency:
-  group: acceptance-specs-${{ github.event.pull_request.number }}
+  group: acceptance-specs-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 defaults:
   run:
     shell: bash
 
+env:
+  # Loopback port for the launcher built from the PR head.
+  ACCEPTANCE_PORT: "18080"
+  # Same credentials the demo ships with (SAIKU_DEMO=true); the runner reads these names.
+  SAIKU_ACCEPTANCE_USER: admin
+  SAIKU_ACCEPTANCE_PASSWORD: admin
+
 jobs:
   specs:
     name: acceptance / specs
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Maven build of the launcher (cold ~5 min) + boot (~1 min) + specs (seconds).
+    timeout-minutes: 25
+    env:
+      USE_LOCAL: ${{ inputs.target != 'deployed' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -53,20 +75,99 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Set up JDK 22
+        if: env.USE_LOCAL == 'true'
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "22"
+          cache: maven
+
+      # Same settings.xml as ci.yml's `build` and `dist` jobs. GH_PACKAGES_TOKEN is empty on fork PRs.
+      - name: Configure Maven settings.xml
+        if: env.USE_LOCAL == 'true'
+        env:
+          GH_PACKAGES_USER: ${{ github.actor }}
+          GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+        run: |
+          if [ -z "${GH_PACKAGES_TOKEN}" ]; then
+            echo "::warning::GH_PACKAGES_TOKEN is not available (fork PR): the launcher cannot be built, so the api specs are recorded not-run."
+            echo "SKIP_BUILD=true" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server><id>github-mondrian-saiku</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+              <server><id>github-olap4j</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+              <server><id>github-olap4j-xmlaserver</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+              <server><id>github-saiku-query</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+              <server><id>github-ossie</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+            </servers>
+          </settings>
+          EOF
+
+      - name: Build launcher fat JAR
+        if: env.USE_LOCAL == 'true' && env.SKIP_BUILD != 'true'
+        run: mvn -B -ntp -pl saiku-launcher -am -Dmaven.test.skip=true package
+
+      - name: Start the launcher (FoodMart demo, loopback)
+        if: env.USE_LOCAL == 'true' && env.SKIP_BUILD != 'true'
+        run: |
+          set -euo pipefail
+          JAR=$(ls saiku-launcher/target/saiku-*.jar | grep -E '/saiku-[0-9][^/]*\.jar$' | grep -Ev -- '-(sources|test-sources|tests)\.jar$' | head -n1)
+          echo "Launcher: $JAR"
+          SAIKU_HOME="$RUNNER_TEMP/saiku-home"
+          LOG="$RUNNER_TEMP/launcher.log"
+          mkdir -p "$SAIKU_HOME"
+          # SAIKU_DEMO=true seeds FoodMart, the admin/admin login and the relaxed AI policy, exactly like
+          # demo.saiku.bi. setsid detaches it from this step so it outlives the step, not the job.
+          SAIKU_DEMO=true SAIKU_TELEMETRY=off \
+            setsid nohup java -XX:+ExitOnOutOfMemoryError -jar "$JAR" serve \
+              --host 127.0.0.1 --port "$ACCEPTANCE_PORT" --home "$SAIKU_HOME" > "$LOG" 2>&1 &
+          echo $! > "$RUNNER_TEMP/launcher.pid"
+          URL="http://127.0.0.1:${ACCEPTANCE_PORT}"
+          # Bounded readiness wait (<= 5 min) on the anonymous /rest/saiku/info endpoint.
+          for i in $(seq 1 100); do
+            if ! kill -0 "$(cat "$RUNNER_TEMP/launcher.pid")" 2>/dev/null; then
+              echo "::error::The launcher exited before it was ready."; tail -n 100 "$LOG"; exit 1
+            fi
+            if [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$URL/rest/saiku/info" || true)" = "200" ]; then
+              echo "Launcher ready after ~$((i * 3))s at $URL"
+              echo "ACCEPTANCE_BASE_URL=$URL" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::The launcher was not ready within 5 minutes."; tail -n 100 "$LOG"; exit 1
+
       - name: Run the specs
         env:
-          ACCEPTANCE_BASE_URL: ${{ vars.ACCEPTANCE_BASE_URL }}
-          # Default to the PUBLIC demo login (demo.saiku.bi runs SAIKU_DEMO=true with admin/admin, the
-          # same pair the deploy smoke test uses), so there is nothing to keep secret and fork PRs
-          # can run login-dependent specs. A repository SECRET overrides it for a private target.
-          SAIKU_ACCEPTANCE_USER: ${{ secrets.SAIKU_ACCEPTANCE_USER || 'admin' }}
-          SAIKU_ACCEPTANCE_PASSWORD: ${{ secrets.SAIKU_ACCEPTANCE_PASSWORD || 'admin' }}
+          DEPLOYED_BASE_URL: ${{ vars.ACCEPTANCE_BASE_URL }}
         run: |
-          if [ -z "${ACCEPTANCE_BASE_URL:-}" ]; then
-            echo "::notice::ACCEPTANCE_BASE_URL is not configured; the specs are recorded as not-run."
+          if [ "$USE_LOCAL" != 'true' ]; then
+            export ACCEPTANCE_BASE_URL="${DEPLOYED_BASE_URL:-}"
           fi
-          node .github/scripts/acceptance-runner.mjs run --all \
-            --out acceptance-results.json --feedback ci-feedback.json
+          if [ -z "${ACCEPTANCE_BASE_URL:-}" ]; then
+            echo "::notice::No server to run against; the api specs are recorded as not-run."
+            node .github/scripts/acceptance-runner.mjs run --all \
+              --out acceptance-results.json --feedback ci-feedback.json
+          else
+            echo "Running against ${ACCEPTANCE_BASE_URL}"
+            node .github/scripts/acceptance-runner.mjs run --all --base-url "$ACCEPTANCE_BASE_URL" \
+              --out acceptance-results.json --feedback ci-feedback.json
+          fi
+
+      # The launcher dies with the runner anyway; stop it explicitly so the log is flushed and complete.
+      - name: Stop the launcher
+        if: always()
+        run: |
+          PID_FILE="$RUNNER_TEMP/launcher.pid"
+          [ -f "$PID_FILE" ] || exit 0
+          kill "$(cat "$PID_FILE")" 2>/dev/null || true
+          sleep 3
+          kill -9 "$(cat "$PID_FILE")" 2>/dev/null || true
 
       - name: Summarise
         if: always()
@@ -83,9 +184,18 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: acceptance-results-${{ github.event.pull_request.number }}
+          name: acceptance-results-${{ github.event.pull_request.number || github.run_id }}
           path: |
             acceptance-results.json
             ci-feedback.json
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Upload the launcher log
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: acceptance-launcher-log-${{ github.event.pull_request.number || github.run_id }}
+          path: ${{ runner.temp }}/launcher.log
+          if-no-files-found: ignore
+          retention-days: 7

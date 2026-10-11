@@ -66,7 +66,7 @@ commands.
   (read-only, job summary).
 - **Acceptance specs** ([acceptance-specs.md](acceptance-specs.md),
   [acceptance/README.md](../acceptance/README.md)). The gate is `ci / acceptance convention`
-  inside `ci.yml`. `acceptance.yml` executes the specs against `ACCEPTANCE_BASE_URL` and is not
+  inside `ci.yml`. `acceptance.yml` builds the PR's launcher, starts it in the runner and executes the specs against it, and is not
   required: with no base URL the specs are recorded `not-run`, never `pass`.
 
 ## Images and previews
@@ -193,7 +193,7 @@ Names only; never put a value in the repo or in a PR.
 | Name | Used by | Purpose | When unset |
 | --- | --- | --- | --- |
 | `ACCEPTANCE_ENFORCE_FROM_ISSUE` | `ci` (`acceptance-convention`) | cutoff issue number: only issues at or above it owe `acceptance/N/spec.json`. Set to `2181` | nothing is enforced; closing PRs are reported `grandfathered` |
-| `ACCEPTANCE_BASE_URL` | `acceptance` | where specs run. Set to `https://demo.saiku.bi` | specs recorded `not-run`; run is green |
+| `ACCEPTANCE_BASE_URL` | `acceptance` | used only by a manual acceptance run with `target: deployed`; PRs run against their own build | no effect on PRs |
 | `GHCR_RETENTION_APPLY` | `ghcr-tag-retention` | `true` makes the scheduled sweep delete; manual dispatch uses its `apply` input | scheduled runs are dry runs |
 | `PREVIEW_SSH_TARGET` | `preview-env`, `preview-command`, `preview-reaper` | `user@host` of the preview box | all three preview workflows skip cleanly |
 | `PREVIEW_SSH_KNOWN_HOSTS` | same | pinned host key line(s) | the host-access step has no pinned key and fails when a target is set |
@@ -253,6 +253,6 @@ Known gotchas:
 | PR sits in the merge queue | the `ci` run on the `gh-readonly-queue/...` ref (Actions, workflow `ci`); a failure there removes the PR from the queue |
 | Demo not updating | `promote-green` run for the commit (did `ci` or `docker` fail?), then the VM timer ([demo-deployment.md](demo-deployment.md)); manual dispatch of `promote-green` is also the rollback |
 | No preview appeared | `PREVIEW_SSH_TARGET` empty (skipped), PR not eligible, or at `PREVIEW_MAX_ENVS` and queued ([ci-preview-environments.md](decisions/ci-preview-environments.md)) |
-| Acceptance specs show `not-run` | `ACCEPTANCE_BASE_URL` or the acceptance credentials are unset; this is green by design |
+| Acceptance specs show `not-run` | a fork PR (no `GH_PACKAGES_TOKEN`, so the launcher cannot be built); this is green by design |
 | Nightly red | the `nightly-compliance` tracking issue; the OWASP lane without `NVD_API_KEY` can fail on rate limits |
 | Release job red | `release-prep` on the release branch first; see [releasing.md](releasing.md) |
