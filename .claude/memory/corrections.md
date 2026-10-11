@@ -11,9 +11,35 @@ Conventions and facts that a maintainer has had to correct an AI agent on, and t
 **Source:** <issue / PR / commit, if any>
 ```
 
-**Keep it short:** if an entry applies broadly, promote it into `AGENTS.md` and delete it here. Delete entries that stop being true.
+A promoted entry has the same shape plus `**Status:** promoted`, `**Supersedes:** <original heading>` and `**Promoted to:** <file#section>`.
+
+**Keep it short:** if an entry applies broadly, promote it into `AGENTS.md` (or the relevant skill) and append a superseding entry with `**Status:** promoted`; do not edit or delete the original. Delete only entries that stop being true.
 
 ---
+
+## 2026-10-11 — Async work: session-scoped beans must be settled on the request thread
+**Status:** promoted
+**Supersedes:** 2026-09-28 — Async work: session-scoped beans must be settled on the request thread
+**Promoted to:** AGENTS.md#conventions-specific-to-this-repo
+The timeless rule now lives in AGENTS.md; this entry only records the promotion.
+**Why:** it changes how every future agent writes executor hand-offs, and the failure only shows in CI.
+**Source:** #2015, #2016
+
+## 2026-10-11 — CI logs: `[ERROR]` lines from the UI build are not the failure
+**Status:** promoted
+**Supersedes:** 2026-09-28 — CI logs: `[ERROR]` lines from the UI build are not the failure
+**Promoted to:** AGENTS.md#build-test-run
+The timeless rule now lives in AGENTS.md; this entry only records the promotion.
+**Why:** every agent that reads a red build log meets this noise.
+**Source:** #2012, #2014
+
+## 2026-10-11 — Merging: `gh pr merge` can silently do nothing
+**Status:** promoted
+**Supersedes:** 2026-09-15 — Merging: `gh pr merge` can silently do nothing
+**Promoted to:** AGENTS.md#build-test-run (and the `cut-release` skill)
+The timeless rule now lives in AGENTS.md; this entry only records the promotion.
+**Why:** later steps (tagging, back-merges, deploys) otherwise run against the wrong commit.
+**Source:** v4.6.x release
 
 ## 2026-09-28 — CI logs: `[ERROR]` lines from the UI build are not the failure
 Maven prints `vite-plugin-svelte` compiler warnings (`state_referenced_locally`, `a11y_*`) and `npm warn EBADENGINE` as `[ERROR]` because they go to stderr. Grepping a failed CI log for `ERROR` surfaces pages of these and hides the real failure. Read the end of the log for the `Failed to execute goal` line, then search for `<<< FAILURE!`.
@@ -28,7 +54,7 @@ Code that hands work to an executor thread (e.g. `AsyncQueryService`) and touche
 ## 2026-09-15 — Merging: `gh pr merge` can silently do nothing
 With a required check still pending, `gh pr merge` prints a "requirements not met" notice and leaves the PR open. After any merge, confirm it: `gh pr view <n> --json state` should say `MERGED`, and the base branch should have advanced. This matters most before tagging a release, where it once led to tagging the old commit.
 **Why:** later steps (tagging, back-merges, deploys) otherwise run against the wrong commit.
-**Source:** v4.6.x release; see `.claude/skills/cut-release/SKILL.md`
+**Source:** v4.6.x release; see `.agents/skills/cut-release/SKILL.md`
 
 ## 2026-08-16 — App Builder: chart-tile Sort and Top N work; don't "fix" the docs
 Chart-tile **Sort categories** and **Top N** are applied client-side (`ChartTile.svelte` → `projectForChart()` in `$lib/dashboard/chartOptions.ts` → `applySortLimit()` from `$lib/charts/sortLimit`). The App Builder docs saying they're client-side, don't re-query, and persist with the tile are accurate.

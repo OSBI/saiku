@@ -4,6 +4,8 @@ Full project guidance lives in [`AGENTS.md`](../AGENTS.md) at the repo root. Rea
 
 ## Repo rules
 
+- **Agent policy:** the *Working agreement* section of `AGENTS.md` (deliverables, hard stops, the `issue-approved` / `human-queue` label model) applies to Copilot too. Skills live in `.agents/skills/`; load only the one that matches the task.
+
 - **Branching:** Gitflow. Work on `feature/<name>`, `fix/<name>` or `chore/<name>` off `development`, and open PRs against `development`, never `main`.
 - **Commit messages:** `#<issue> - <description>`.
 - **Java formatting:** Palantir Java Format via Spotless. Run `mvn spotless:apply` before committing; `mvn verify` fails on unformatted code.

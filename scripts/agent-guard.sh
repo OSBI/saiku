@@ -2,7 +2,7 @@
 # agent-guard.sh — PreToolUse guard for coding agents working in this repository.
 #
 # Mechanical enforcement of the rules this repo states in prose (AGENTS.md,
-# CONTRIBUTING.md, .claude/skills/) so an agent cannot skip them by not reading
+# CONTRIBUTING.md, .agents/skills/) so an agent cannot skip them by not reading
 # the docs. Wired in from `.claude/settings.json`; run directly it is also usable
 # from any harness:
 #
@@ -115,13 +115,13 @@ bash)
     fi
   fi
 
-  # Rule 4 — releases are CI-driven. .claude/skills/cut-release/SKILL.md step 1:
+  # Rule 4 — releases are CI-driven. .agents/skills/cut-release/SKILL.md step 1:
   # "Never `mvn deploy` locally."
   if invokes mvn "$command" || invokes ./mvnw "$command"; then
     while IFS= read -r goal; do
       case "$goal" in
       deploy | deploy:*)
-        block "'mvn deploy' is blocked — publishing happens in CI when a v* tag is pushed (see .claude/skills/cut-release/SKILL.md)."
+        block "'mvn deploy' is blocked — publishing happens in CI when a v* tag is pushed (see .agents/skills/cut-release/SKILL.md)."
         ;;
       esac
     done < <(tokens "$command")

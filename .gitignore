@@ -479,7 +479,7 @@ nbdist/
 # un-reviewed override.
 .claude/*
 !.claude/settings.json
-!.claude/skills/
+!.claude/skills
 !.claude/memory/
 !.claude/session-summary.md
 # Personal overrides stay ignored — settings.local.json is a developer's own.
