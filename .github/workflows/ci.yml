@@ -522,7 +522,7 @@ jobs:
   # The `acceptance/<issue>/` convention: a PR that claims to close issue N (at or above
   # the cutoff) must ship acceptance/N/spec.json, or carry the `acceptance-waived` label on a
   # docs-or-tests-only change. The logic is spiculedata/acceptance-spec's convention.yml, called
-  # at a full commit SHA (same pin as acceptance.yml; bump both, see docs/acceptance-specs.md).
+  # at a full commit SHA (same pin as run-specs and spec-first below; bump all three, see docs/acceptance-specs.md).
   # The PR body and labels are untrusted text: upstream passes them through env:, never by
   # interpolation into a script. Pull requests only (a push has no PR body): `skip-outside-pull-request`
   # makes the called job skip itself on push / merge_group. Do not replace it with a job-level condition here,
@@ -557,7 +557,7 @@ jobs:
         \.(test|spec)\.[cm]?[jt]sx?$
         \.e2e\.[cm]?[jt]s$
 
-  # ACCEPTANCE SPECS ARE PART OF THE GATE. The two shared workflows below used to live in acceptance.yml and
+  # ACCEPTANCE SPECS ARE PART OF THE GATE. The two shared workflows below used to live in a separate acceptance.yml and
   # were visible but not required. They are called from here so that the one required check, `ci`, waits for
   # them (see the `ci` job: it reads their RESULT and their VERDICT output). Check names are unchanged:
   # a called job reads `<caller job name> / <called job name>`. Pin, trust model and how to bump:
