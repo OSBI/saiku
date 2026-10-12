@@ -1,0 +1,8 @@
+{
+  "issue": 999992,
+  "title": "THROWAWAY: a file only this PR adds exists (red on base, green on head)",
+  "kind": "ui",
+  "criteria": [{ "id": "C1", "given": "the PR checkout", "then": "THROWAWAY_MARKER.txt exists at the repo root" }],
+  "command": ["node", "check.mjs"],
+  "timeoutSeconds": 60
+}
