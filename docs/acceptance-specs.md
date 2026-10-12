@@ -114,7 +114,9 @@ therefore stay in this repository for now.
   `.github/scripts/acceptance-check.mjs`). acceptance-spec's `convention.yml` waives a PR whose files sit under
   *any* `e2e/` directory (and a top-level `test/`), where Saiku waives only `saiku-ui/e2e/` and `tests/`. The
   waiver list is not an input upstream, so adopting it as is would let a PR that adds product code under, say,
-  `saiku-core/e2e/` take the `acceptance-waived` label. The gate moves once upstream can be told the exact list.
+  `saiku-core/e2e/` take the `acceptance-waived` label. Upstream PR [spiculedata/acceptance-spec#3](https://github.com/spiculedata/acceptance-spec/pull/3) adds a
+  `waivable-paths` input; once it is merged and this repository re-pins, the gate can move to `convention.yml`
+  with Saiku's exact list.
 - **The scripts `acceptance-check.mjs`, `acceptance-runner.mjs`, `acceptance-spec.mjs` and their tests.** The gate
   needs the first and the last. `acceptance/2172/check.mjs` (the spec for the convention itself) imports all three
   and asserts the local behaviour, including the `ci-feedback.json` `acceptance` key that upstream dropped.
