@@ -320,6 +320,85 @@ launcher serves the static `dist/` under `/ui/`.
 The old `groups.google.com/a/saiku.meteorite.bi` lists and `##saiku` IRC
 channel are no longer monitored.
 
+## How work flows here
+
+Saiku is developed with help from "the hive", a self-hosted system of AI agents that works alongside the maintainers. This section explains how an issue becomes a merged change, who signs off, and what happens when something goes wrong. The rules the agents follow live in [`AGENTS.md`](AGENTS.md); this is the short version for people.
+
+### The cast
+
+- **Maintainers** (people) write and approve issues, review, and merge. Nothing merges without a human.
+- **The hive** watches this repo. Its agents include a scanner (looks for work and problems), quality (fixes red CI and review feedback on PRs), ci-maintainer (keeps CI healthy), sec-check (security review), guide, and a supervisor that keeps the others running.
+- **The contributor relay** is a worker (an AI model run on a maintainer's machine). It takes an approved issue, works it on a branch, and opens a PR as the `spicule-hive-bot` account. It writes most of the agent-made feature PRs.
+
+### Life of an issue
+
+1. **Filed** with an *Acceptance criteria* section, meaning a heading or a checklist that says how "done" is checked. The bug and feature templates in [`.github/ISSUE_TEMPLATE`](.github/ISSUE_TEMPLATE) prompt for it.
+2. **Approved.** A maintainer adds the `issue-approved` label. It is the only thing that lets the agents touch an issue. The `issue-gate` workflow removes it, with a comment, if the issue has no acceptance criteria, so approval cannot be vague.
+3. **Selected.** The hive picks an approved issue nobody is working on. It skips anything labelled `hold`, `do-not-merge`, `needs-human`, `human-queue`, `blocked` or `needs-decision`. `human-queue` is never given to an agent, even next to `issue-approved`.
+4. **Claimed.** The worker holds a time-limited lease on the issue. After 90 minutes with no progress the lease ends and the issue is freed, so two workers never do the same task and a stuck one does not block it.
+5. **Worked.** The agent reads `AGENTS.md`, works on a branch, and finishes in exactly one of three ways: a pull request, a written finding on the issue (what it checked, what blocks it, what would unblock it, what it could not verify), or a "no work needed" verdict with evidence. A finding is finished work, not a failure.
+6. **Checked.** CI runs on the PR (see "What enforces this").
+7. **Reviewed and merged by a human.**
+
+### Sign-off and approval
+
+- A person reviews every PR and merges it through the merge queue. Agents never merge, approve their own PR, push to `development`, or remove `hold`, `do-not-merge`, `needs-human` or `human-queue`.
+- The hive does not auto-approve. Its AI review lane is off here, so green CI means "ready for a human to look", not "approved".
+- The tier classifier labels each PR `risk/high`, `risk/medium` or `risk/low` from the files it touches, per [`docs/risk-tiers.md`](docs/risk-tiers.md). The label is advisory and does not block anything, but changes to CI, security, builds or the design system are high tier and deserve a closer look.
+- Some decisions are never an agent's to make: architecture, user-visible behaviour changes without agreed criteria, auth, secrets and supply-chain changes, data-losing migrations, new dependencies, and breaking changes across repos. The agent stops and writes a finding; a maintainer decides.
+
+### When something goes wrong
+
+| Situation | What happens | What you do |
+|---|---|---|
+| A bot PR's CI goes red | A watcher adds `needs-rework` (once per failing commit) and the quality agent fixes it. After 2 automatic rounds the PR gets `needs-human`. | Read the failing check, fix or re-scope, then remove `needs-human`. |
+| You want an agent to rework a PR, including your own | Add `needs-rework`. Within a few minutes it becomes `rework-queued` and goes to the quality agent. | Re-add `needs-rework` for another round. |
+| An agent cannot finish within scope | It writes an evidenced finding and stops, and the issue gets `blocked`. It does not retry the same blocked task or widen the scope. | Unblock it and remove `blocked`, or close the issue. |
+| A worker's attempt ends with no PR | The issue returns to the queue after a cooldown, so a later attempt can try. A bad run is not retried at once. | If it keeps happening, add `hold` and read the finding. |
+| A worker stalls | The 90-minute lease expires and the issue is freed. | Nothing. |
+| You want agents to leave an issue alone | Add `hold`, or `human-queue` for work meant for people. | Remove it when ready. |
+
+PRs written by people are not retried automatically. Add `needs-rework` to ask for it.
+
+### Acceptance-test-driven builds
+
+Acceptance specs are enabled here. A PR that closes issue N ships `acceptance/N/spec.json`, a runnable version of the issue's criteria, committed before the fix. The rules apply to issues numbered 2181 and above.
+
+- `ci / acceptance convention` (inside `ci`) fails a PR that closes an issue without a spec.
+- The `acceptance` workflow runs the specs against that PR's own build (saiku#2235, merged).
+- A check named `acceptance / spec fails on base` is being added in saiku#2239. It will require each new spec to fail on the base branch and pass on the PR, since a spec that already passes proves nothing. A human-only `spec-already-green` label, planned in that PR and not yet created, will excuse a spec that is legitimately green on base.
+- The human-only `acceptance-waived` label waives the convention for one docs-only or tests-only PR.
+
+Details are in [`acceptance/README.md`](acceptance/README.md) and [`docs/acceptance-specs.md`](docs/acceptance-specs.md).
+
+### What enforces this
+
+- **Required check.** The default branch, `development`, is protected and requires the aggregate `ci` check ([`ci.yml`](.github/workflows/ci.yml)). `ci` passes when every job under it succeeded or was legitimately skipped for the files changed, so a red build, UI or script job blocks the merge.
+- **Merge queue.** `development` uses GitHub's merge queue with the merge-commit method. `ci` runs again on the queued result before it lands.
+- **Other gates.** `issue-gate` guards approvals, and the risk-tier classifier labels every PR. The acceptance workflow runs the specs and is not part of `ci`, so a red result is a signal for reviewers rather than a hard block.
+- **Dependabot.** [`dependabot-automerge.yml`](.github/workflows/dependabot-automerge.yml) queues single-package patch bumps and GitHub Actions non-major bumps once `ci` is green. Everything else waits for a person.
+- **What merging does.** A merge to `development` lets `promote-green` move the public demo's image tag, once `ci` has passed on that commit ([`docs/demo-deployment.md`](docs/demo-deployment.md)). `main` is only for releases and hotfixes.
+
+To run the tests locally, use `mvn verify` (what the `build` job gates on), plus `mvn spotless:apply` before committing. UI checks run from `saiku-ui` with `npm run check`. See [`TESTING.md`](TESTING.md).
+
+### Label cheat sheet
+
+| Label | Meaning |
+|---|---|
+| `issue-approved` | Admitted to the agents |
+| `human-queue` | People only, never agent work |
+| `hold`, `do-not-merge` | Stop |
+| `needs-human` | An agent stopped, a person must act |
+| `blocked` | Waiting on something outside the task |
+| `needs-decision` | Waiting on a maintainer decision |
+| `needs-rework`, `rework-queued` | Sent back to the quality agent |
+| `acceptance-waived` | Waives the acceptance-spec convention (human only) |
+| `spec-already-green` | Planned in saiku#2239, human only, not yet created |
+
+### Where the rules live
+
+[`AGENTS.md`](AGENTS.md) is the single source of truth for hard stops, decision gates and conventions (`CLAUDE.md` imports it). [`docs/ci-overview.md`](docs/ci-overview.md) maps every workflow and label. Reusable agent skills live in [`.agents/skills`](.agents/skills).
+
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). Short version:
