@@ -43,7 +43,7 @@ path-filtered or renamed.
 
 | Job | Runs | What it checks |
 | --- | --- | --- |
-| `changes` | always | `dorny/paths-filter` decides `java` / `ui` / `docs`. Skipped on `merge_group` |
+| `changes` | always | `dorny/paths-filter` decides `java` / `ui` / `docs` / `sheets` / `acceptance` / `specs`. Skipped on `merge_group` |
 | `build` | java paths changed, any `push`, any `merge_group` | licence headers, `mvn verify` (Spotless, unit tests, ITs) with one retry per failing test, test-count floors (`.github/test-floors.json`), coverage floors (`.coverage-thresholds.json`) |
 | `ui` | ui paths changed, any `push`, any `merge_group` | `npm run check`, vitest (failing files retried once), lint, production build, mocked-backend Playwright |
 | `dist` | java paths changed, any `push`, any `merge_group` | builds the launcher fat-JAR and uploads `saiku-dist-<version>.zip` |
@@ -51,13 +51,15 @@ path-filtered or renamed.
 | `scripts` | always | python unittests in `.github/scripts/` (GHCR retention, 40-hex `uses:` pin guard) |
 | `flake-policy` | always | `node --test ".github/scripts/*.test.mjs"` and the quarantine-validity check |
 | `acceptance-convention` | `pull_request` only | a PR closing issue N (at or above the cutoff) ships `acceptance/N/spec.json` or carries `acceptance-waived` |
+| `run-specs` (+ alias `specs`) | `pull_request`, and `java`, `ui` or `acceptance` changed | builds the PR's launcher, runs every `acceptance/*/spec.json` against it. `ci` requires verdict `pass` (or `skipped` when there are no specs); `fail` and `not-run` are red |
+| `spec-first` | `pull_request` | `detect changed specs` takes seconds when no spec changed. When one was added or modified it must be red on the base build and green on head (`red-on-base-green-on-head`); `passes-on-base` is red unless a human applied `spec-already-green` |
 
 Test and coverage floors are ratchets; see [quality.md](quality.md). AGENTS.md has the build
 commands.
 
 ## Policy in a few lines
 
-- **CI feedback** ([ci-feedback.md](ci-feedback.md)). When `acceptance`, `ci`, `design-system`,
+- **CI feedback** ([ci-feedback.md](ci-feedback.md)). When `ci`, `design-system`,
   `docker`, `preview-infra` or `release-prep` finishes, `ci-feedback.yml` writes
   `ci-feedback.json` (the first real error per failing job) and keeps one sticky comment on the
   PR current. Read that comment before the raw log. A new PR-gating workflow must be added to its
@@ -70,17 +72,18 @@ commands.
 - **Acceptance specs** ([acceptance-specs.md](acceptance-specs.md),
   [acceptance/README.md](../acceptance/README.md)). The gate is `ci / acceptance convention`
   inside `ci.yml`, a call of acceptance-spec's `convention.yml` (same pin; Saiku's `waivable-paths`; the cutoff stays the
-  `ACCEPTANCE_ENFORCE_FROM_ISSUE` variable). `acceptance.yml` calls the reusable workflows of
+  `ACCEPTANCE_ENFORCE_FROM_ISSUE` variable). The jobs `run-specs` and `spec-first` of `ci.yml` call the reusable workflows of
   [spiculedata/acceptance-spec](https://github.com/spiculedata/acceptance-spec) at a pinned commit SHA
-  ([how to bump it](acceptance-specs.md#bumping-acceptance-spec)); it builds the PR's launcher, starts it in the
-  runner and executes the specs against it, and is not required: with no base URL the specs are recorded `not-run`,
-  never `pass`. Its checks are `acceptance / acceptance specs` (also republished as `acceptance / specs`, the name
+  ([how to bump it](acceptance-specs.md#bumping-acceptance-spec)); they build the PR's launcher, start it in the
+  runner and execute the specs against it. **They block the merge**: the `ci` rollup reads their results and their
+  verdicts (a spec that could not run is `not-run`, never `pass`, and is red). They run on `pull_request` only, and
+  `run-specs` only when product code, the UI, a workflow or `acceptance/` changed (a docs-only PR skips the Maven build). Its checks are `acceptance / acceptance specs` (also republished as `acceptance / specs`, the name
   the hive label watcher reads), `acceptance / detect changed specs`, `acceptance / specs on head`,
   `acceptance / specs on base` and `acceptance / spec fails on base`. When a PR adds or changes a
   `spec.json`, `acceptance / spec fails on base` also demands the spec be red on the base branch's build and green on the
   PR's (a spec that already passes on base proves nothing); only then do the head and base Maven builds run (the base
-  jar is cached on the base SHA). The escape hatch is the human-applied `spec-already-green` label. Not part of `ci`;
-  fork PRs get `not-run`.
+  jar is cached on the base SHA). The escape hatch is the human-applied `spec-already-green` label. Fork PRs
+  get `not-run`, which turns `ci` red.
 
 ## Images and previews
 
@@ -105,7 +108,7 @@ Every file under `.github/workflows/`.
 | `ci.yml` | PR, push to `development` / `phase-*`, `merge_group` | the required `ci` check; `saiku-dist` artifact; flake records | this page, [ci-flakes.md](ci-flakes.md) |
 | `docker.yml` | push to `development` / `main`, same-repo PR (path-filtered), manual | `:development`, `:main`, `:sha-<short>`, `:pr-<n>`, SBOM + provenance | [ci-images.md](ci-images.md) |
 | `promote-green.yml` | `ci` completed on `development`, manual (rollback) | retags `sha-<short>` as `:development-green` | [demo-deployment.md](demo-deployment.md) |
-| `acceptance.yml` | PR opened / synchronised / reopened | thin callers of acceptance-spec's `run-specs.yml` and `base-check.yml` (pinned SHA): executes `acceptance/<issue>/` specs; results artifact; when a spec changed, `acceptance / spec fails on base` (red on base, green on head) | [acceptance-specs.md](acceptance-specs.md) |
+| `ci.yml` jobs `run-specs`, `spec-first`, `specs` | PR opened / synchronised / reopened (not `push`, not `merge_group`) | thin callers of acceptance-spec's `run-specs.yml` and `base-check.yml` (pinned SHA), inside the required `ci` rollup: executes `acceptance/<issue>/` specs; results artifact; when a spec changed, `acceptance / spec fails on base` (red on base, green on head) | [acceptance-specs.md](acceptance-specs.md) |
 | `ci-feedback.yml` | `workflow_run` of the gating workflows | sticky PR comment, `ci-feedback.json` | [ci-feedback.md](ci-feedback.md) |
 | `flake-ledger.yml` | weekdays 05:41 UTC, manual | rolling flake rate in the job summary and an artifact | [ci-flakes.md](ci-flakes.md) |
 | `preview-env.yml` | `pull_request_target` into `development` | create / update / tear down the PR's preview | [ci-preview-environments.md](decisions/ci-preview-environments.md) |
@@ -158,7 +161,11 @@ What this means in `ci.yml`:
 - On `merge_group` the path filter is skipped and `build`, `ui` and `dist` always run, so every
   queued merge exercises everything. `acceptance-convention` is `pull_request`-only: the called job
   skips itself (`skip-outside-pull-request`), so no bare `ci` check appears beside the real one.
-- Only the `ci` workflow runs on the `gh-readonly-queue/...` ref. `docker.yml`, `acceptance.yml`
+  `run-specs` and `spec-first` are `pull_request`-only too (the shared workflows refuse any other event), so
+  they carry `if: github.event_name == 'pull_request'` and are skipped on the queue; their skipped check is named
+  `acceptance`, not `ci`. The `ci` rollup accepts that skip on `push` / `merge_group` only. The queue therefore
+  re-runs the build and tests on the queued result, not the acceptance specs.
+- Only the `ci` workflow runs on the `gh-readonly-queue/...` ref. `docker.yml`
   and the preview workflows do not, so nothing in the queue builds an image.
 
 Using it:
@@ -207,7 +214,7 @@ Names only; never put a value in the repo or in a PR.
 | Name | Used by | Purpose | When unset |
 | --- | --- | --- | --- |
 | `ACCEPTANCE_ENFORCE_FROM_ISSUE` | `ci` (`acceptance-convention`) | cutoff issue number: only issues at or above it owe `acceptance/N/spec.json`. Set to `2181` | nothing is enforced; closing PRs are reported `grandfathered` |
-| `ACCEPTANCE_BASE_URL` | none | unused since `acceptance.yml` moved to the shared workflows (it fed the removed manual `target: deployed` run) | no effect |
+| `ACCEPTANCE_BASE_URL` | none | unused since the acceptance jobs moved to the shared workflows (it fed the removed manual `target: deployed` run) | no effect |
 | `GHCR_RETENTION_APPLY` | `ghcr-tag-retention` | `true` makes the scheduled sweep delete; manual dispatch uses its `apply` input | scheduled runs are dry runs |
 | `PREVIEW_SSH_TARGET` | `preview-env`, `preview-command`, `preview-reaper` | `user@host` of the preview box | all three preview workflows skip cleanly |
 | `PREVIEW_SSH_KNOWN_HOSTS` | same | pinned host key line(s) | the host-access step has no pinned key and fails when a target is set |
@@ -220,7 +227,7 @@ Why the acceptance values are what they are: the cutoff makes the gate apply onl
 numbered 2181 and up, so older work is not retroactively blocked. Specs run against the PR's own
 launcher on loopback because GitHub-hosted runners are not on the tailnet (preview environments are
 unreachable) and the public demo is not redeployed when `development` moves.
-There is no acceptance-login secret: `acceptance.yml` passes the public demo login (`admin` / `admin`) as literals
+There is no acceptance-login secret: `ci.yml` passes the public demo login (`admin` / `admin`) as literals
 to the shared workflows' `ACCEPTANCE_USER` / `ACCEPTANCE_PASSWORD`, so login-dependent specs run, fork PRs
 included. To aim acceptance at a private instance, change those two lines to repository secrets, never variables
 (unmasked).
@@ -287,6 +294,6 @@ Known gotchas:
 | Demo not updating | `promote-green` run for the commit (did `ci` or `docker` fail?), then the VM timer ([demo-deployment.md](demo-deployment.md)); manual dispatch of `promote-green` is also the rollback |
 | No preview appeared | `PREVIEW_SSH_TARGET` empty (skipped), PR not eligible, or at `PREVIEW_MAX_ENVS` and queued ([ci-preview-environments.md](decisions/ci-preview-environments.md)) |
 | `acceptance / spec fails on base` red | a spec in the PR passes on the base build (it was written after the fix, or guards behaviour that already works), fails on the PR build, or the base run did not complete. Commit the spec first so it fails without the fix; for a legitimate regression guard a human adds `spec-already-green` ([acceptance-specs.md](acceptance-specs.md)) |
-| Acceptance specs show `not-run` | a fork PR (no `GH_PACKAGES_TOKEN`, so the launcher cannot be built); this is green by design |
+| Acceptance specs show `not-run`, `ci` red | a fork PR (no `GH_PACKAGES_TOKEN`, so the launcher cannot be built). `not-run` is never a pass, so `ci` is red; a maintainer re-proves the work on a same-repository branch |
 | Nightly red | the `nightly-compliance` tracking issue; the OWASP lane without `NVD_API_KEY` can fail on rate limits |
 | Release job red | `release-prep` on the release branch first; see [releasing.md](releasing.md) |

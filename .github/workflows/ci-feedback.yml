@@ -35,7 +35,6 @@ name: ci feedback
 on:
   workflow_run:
     workflows:
-      - acceptance
       - ci
       - design-system
       - docker

@@ -12,7 +12,7 @@
 // The CLI is `acceptance-runner.mjs` (execute the specs locally, fold the result into
 // ci-feedback.json). CI no longer runs this file: the convention gate (which PR owes a spec, the
 // waiver) is spiculedata/acceptance-spec's convention.yml called from ci.yml, and the spec runner and
-// red-on-base proof are its run-specs.yml / base-check.yml called from acceptance.yml.
+// red-on-base proof are its run-specs.yml / base-check.yml called from ci.yml.
 // Format and workflow are documented in docs/acceptance-specs.md.
 
 /** The one file a spec directory must contain. */

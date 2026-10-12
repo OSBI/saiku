@@ -13,13 +13,20 @@ Write the spec **first**: commit `acceptance/N/spec.json` before the implementat
 runs every spec a PR adds or changes against the base branch's build and against the PR's build, and fails one that
 already passes on base (it proves nothing). A human may excuse a legitimate exception with the `spec-already-green` label.
 
+**What blocks a merge.** The jobs that run the specs are called from `ci.yml`, so the required `ci` check waits
+for them and reads their verdicts. `ci` is red when a spec fails, when a spec could not run (`not-run`, for
+example on a fork PR, is never a pass), when a new or changed spec already passes on the base build (unless a human
+applied `spec-already-green`), or when the red-on-base proof did not run for a PR that changed a spec. They run on
+pull requests, and the specs themselves only when the PR changes product code, the UI, a workflow or `acceptance/`
+(a docs-only PR skips the Maven build and is green in about a minute). The merge queue does not re-run them.
+
 Full format reference, assertion list, authentication and rollout: [`docs/acceptance-specs.md`](../docs/acceptance-specs.md).
 
 The specs are executed, and the red-on-base proof is made, by the reusable workflows in
 [spiculedata/acceptance-spec](https://github.com/spiculedata/acceptance-spec), called from
-`.github/workflows/acceptance.yml` at a pinned commit SHA (how to bump it:
+`.github/workflows/ci.yml` (jobs `run-specs` and `spec-first`) at a pinned commit SHA (how to bump it:
 [Bumping acceptance-spec](../docs/acceptance-specs.md#bumping-acceptance-spec)). The convention gate
-(`ci / acceptance convention`) is acceptance-spec's `convention.yml`, called from `ci.yml` at the same pin with
+(`ci / acceptance convention`) is acceptance-spec's `convention.yml`, called from the same file at the same pin with
 this repository's waiver list.
 
 ## Layout

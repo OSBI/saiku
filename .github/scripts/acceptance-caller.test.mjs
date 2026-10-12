@@ -1,4 +1,4 @@
-// Guards for how acceptance.yml calls the shared workflows in spiculedata/acceptance-spec.
+// Guards for how ci.yml calls the shared workflows in spiculedata/acceptance-spec.
 // The logic (run the specs, red on base / green on head) is tested in that repository; what is
 // Saiku's, and what must not drift here, is the pin, the enforcing mode, the check names other
 // things key on (the hive label watcher reads `acceptance / specs`), the trust model and the
@@ -11,13 +11,13 @@ import { join } from 'node:path';
 import test from 'node:test';
 
 const repoRoot = join(import.meta.dirname, '..', '..');
-const workflow = readFileSync(join(repoRoot, '.github', 'workflows', 'acceptance.yml'), 'utf8');
+const workflow = readFileSync(join(repoRoot, '.github', 'workflows', 'ci.yml'), 'utf8');
 const lines = workflow.split('\n');
 const code = lines.filter((line) => !line.trim().startsWith('#')).join('\n');
 
 const SHARED = 'spiculedata/acceptance-spec/.github/workflows';
 
-/** The text of one top-level job in acceptance.yml. */
+/** The text of one top-level job in ci.yml. */
 function jobBlock(id) {
   const start = lines.findIndex((line) => line === `  ${id}:`);
   assert.ok(start >= 0, `job ${id} exists`);
@@ -51,8 +51,8 @@ test('the shared workflows are called at ONE full commit SHA, never a branch or 
   const shared = uses.filter((u) => u.startsWith(`${SHARED}/`));
   assert.deepEqual(
     shared.map((u) => u.slice(SHARED.length + 1, u.indexOf('@'))).sort(),
-    ['base-check.yml', 'run-specs.yml'],
-    'run-specs and base-check are called; the convention gate is called from ci.yml (ci-wiring.test.mjs guards it)'
+    ['base-check.yml', 'convention.yml', 'run-specs.yml'],
+    'run-specs and base-check are called here, next to the convention gate (ci-wiring.test.mjs guards that one)'
   );
   const refs = new Set(shared.map((u) => u.slice(u.indexOf('@') + 1)));
   assert.equal(refs.size, 1, 'every call uses the same pin');
@@ -71,8 +71,22 @@ test('both callers enforce, and keep the check names that other things key on', 
   assert.match(alias, /name: acceptance \/ specs$/m);
   assert.match(alias, /needs: \[run-specs\]/);
   assert.match(alias, /if: always\(\)/, 'a failed or cancelled run-specs must still turn the alias red');
-  assert.match(alias, /!= "success"/);
+  assert.match(alias, /success\) ;;/);
+  assert.match(alias, /pass\|skipped\) ;;/, 'only pass (or nothing to run) is green; not-run is red');
   assert.match(alias, /exit 1/);
+});
+
+test('the callers are pull_request only (the shared workflows refuse merge_group and push) and feed the ci rollup', () => {
+  for (const id of ['run-specs', 'spec-first']) {
+    const block = jobBlock(id);
+    assert.match(block, /needs: changes/, `${id} waits for the path filter`);
+    assert.match(block, /github\.event_name == 'pull_request'/, `${id} is skipped on merge_group and push`);
+  }
+  const run = jobBlock('run-specs');
+  for (const f of ['java', 'ui', 'acceptance']) assert.match(run, new RegExp(`needs\\.changes\\.outputs\\.${f} == 'true'`), `run-specs runs when ${f} changed`);
+  // docs-only must not pay for a Maven build, but a spec-less PR still gets its (seconds long) detect job
+  assert.doesNotMatch(run, /outputs\.docs/);
+  assert.doesNotMatch(jobBlock('spec-first'), /outputs\./, 'spec-first detects changed specs itself');
 });
 
 test('the Saiku specific settings: REST paths, loopback launcher, Maven token, fork not-run, JDK 22', () => {
@@ -111,7 +125,7 @@ test('head and base are built and started identically; the base launcher is cach
 
 test('trust model: pull_request only, read-only token, the Maven token is the only real secret', () => {
   assert.doesNotMatch(code, /pull_request_target|workflow_run|workflow_dispatch/);
-  assert.match(code, /^on:\n {2}pull_request:/m);
+  assert.match(code, /^on:\n(?: {2}.*\n)*? {2}pull_request:/m);
   assert.match(code, /^permissions:\n {2}contents: read$/m);
   assert.doesNotMatch(code, /(?:contents|issues|pull-requests|actions|checks|statuses|id-token): write/);
   assert.doesNotMatch(code, /GITHUB_TOKEN|github\.token|secrets: inherit/);
