@@ -53,40 +53,17 @@ test('the flake-policy job runs every script test and validates the quarantine l
   assert.doesNotMatch(block, /\bif:/, 'the tooling tests are never skipped by a path filter');
 });
 
-test('the acceptance convention gate is the shared convention.yml, pinned, enforcing, named like before', () => {
+test('the acceptance convention job is a pull_request gate and keeps untrusted text out of the script', () => {
   const block = jobBlock('acceptance-convention');
-  // The rollup needs it by job id; the CHECK name `ci / acceptance convention` is `<caller name> / <called name>`
-  // ("acceptance convention" upstream), so the caller's display name is `ci`.
-  assert.match(block, /^ {4}name: ci$/m);
-  assert.match(block, /if: github\.event_name == 'pull_request'/, 'the shared workflow refuses every other event');
-  const pin = block.match(/uses: spiculedata\/acceptance-spec\/\.github\/workflows\/convention\.yml@([0-9a-f]{40})$/m);
-  assert.ok(pin, 'convention.yml is called at a full 40 character SHA');
-  const acceptance = readFileSync(join(root, '.github', 'workflows', 'acceptance.yml'), 'utf8');
-  const others = [...acceptance.matchAll(/acceptance-spec\/\.github\/workflows\/[\w.-]+@([0-9a-f]{40})/g)].map((m) => m[1]);
-  assert.ok(others.length > 0);
-  assert.deepEqual([...new Set(others)], [pin[1]], 'ci.yml and acceptance.yml use the same acceptance-spec pin');
-  assert.match(block, /mode: enforce/);
-  assert.match(block, /enforce-from-issue: \$\{\{ vars\.ACCEPTANCE_ENFORCE_FROM_ISSUE \}\}/);
-  // untrusted PR text is handled upstream (env, never interpolated); nothing of it appears here
-  assert.doesNotMatch(block, /pull_request\.(body|title)/);
-  assert.doesNotMatch(block, /secrets/);
-});
-
-test('the convention waiver list is Saiku\'s exact list, not the shared built-in one', () => {
-  const block = jobBlock('acceptance-convention').split('\n').filter((line) => !line.trim().startsWith('#'));
-  const start = block.findIndex((line) => line.trim() === 'waivable-paths: |');
-  assert.ok(start >= 0, 'waivable-paths is passed');
-  const patterns = [];
-  for (let i = start + 1; i < block.length && block[i].trim() !== ''; i += 1) patterns.push(new RegExp(block[i].trim()));
-  assert.equal(patterns.length, 9);
-  const waived = (path) => patterns.some((re) => re.test(path));
-  for (const path of ['docs/a.md', 'README.md', 'README.MD', '.github/ISSUE_TEMPLATE/bug.yml', 'saiku-core/x/src/test/java/A.java', 'saiku-ui/src/__tests__/a.ts', 'saiku-ui/e2e/login.ts', 'tests/run.sh', 'a/b.test.ts', 'a/b.spec.mjs', 'a/b.e2e.ts']) {
-    assert.ok(waived(path), `${path} is waivable`);
-  }
-  // waivable by the shared built-in list, deliberately NOT here (product code could hide there)
-  for (const path of ['saiku-core/e2e/x.js', 'e2e/x.js', 'test/x.java', 'saiku-ui/src/main.ts', '.github/workflows/ci.yml', 'saiku-core/src/main/java/A.java']) {
-    assert.ok(!waived(path), `${path} must not be waivable`);
-  }
+  assert.match(block, /name: ci \/ acceptance convention/);
+  assert.match(block, /if: github\.event_name == 'pull_request'/);
+  assert.match(block, /fetch-depth: 2/, 'two commits so the waiver is verified against the PR change set');
+  assert.match(block, /ACCEPTANCE_ENFORCE_FROM_ISSUE: \$\{\{ vars\.ACCEPTANCE_ENFORCE_FROM_ISSUE \}\}/);
+  assert.match(block, /PR_BODY: \$\{\{ github\.event\.pull_request\.body \}\}/);
+  assert.match(block, /changed-files/);
+  // `${{ }}` only in env:/with:/if:, never inside a run: script (a PR body is attacker text)
+  const scripts = [...codeOnly(block).matchAll(/^\s+run: (.+)$/gm)].map((m) => m[1]).join('\n');
+  assert.doesNotMatch(scripts, /\$\{\{/);
 });
 
 test('the flake verdict steps capture exit codes instead of masking steps with continue-on-error', () => {

@@ -18,9 +18,8 @@ Full format reference, assertion list, authentication and rollout: [`docs/accept
 The specs are executed, and the red-on-base proof is made, by the reusable workflows in
 [spiculedata/acceptance-spec](https://github.com/spiculedata/acceptance-spec), called from
 `.github/workflows/acceptance.yml` at a pinned commit SHA (how to bump it:
-[Bumping acceptance-spec](../docs/acceptance-specs.md#bumping-acceptance-spec)). The convention gate
-(`ci / acceptance convention`) is acceptance-spec's `convention.yml`, called from `ci.yml` at the same pin with
-this repository's waiver list.
+[Bumping acceptance-spec](../docs/acceptance-specs.md#bumping-acceptance-spec)). The convention gate is still this
+repository's own `acceptance-check.mjs`.
 
 ## Layout
 
@@ -77,7 +76,7 @@ SAIKU_ACCEPTANCE_USER=admin SAIKU_ACCEPTANCE_PASSWORD=admin \
   --out acceptance-results.json --feedback ci-feedback.json
 
 # just the convention (what CI gates on)
-PR_BODY="Closes #818" ACCEPTANCE_ENFORCE_FROM_ISSUE=1 node <acceptance-spec>/scripts/acceptance-check.mjs
+PR_BODY="Closes #818" ACCEPTANCE_ENFORCE_FROM_ISSUE=1 node .github/scripts/acceptance-check.mjs
 ```
 
 The runner never reports "pass" for something it could not run: no base URL, an invalid spec, missing

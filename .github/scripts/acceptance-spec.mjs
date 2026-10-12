@@ -2,21 +2,25 @@
 // adapted to this repository: REST base path `/rest/saiku/api`, session / basic auth
 // (docs/acceptance-specs.md, "Authentication"), and this repo's test layout for the waiver.
 //
-// Every pure decision the LOCAL runner makes about an acceptance spec lives here so it can be unit
+// Every pure decision about an acceptance spec lives here so it can be unit
 // tested offline and reasoned about without a network or a runner:
 //
+//   * which issues a PR claims to close          -> closingIssues()
 //   * whether a spec directory is well formed    -> validateSpec()
+//   * whether this PR owes a spec at all         -> decideRequirement()
 //   * whether one HTTP assertion holds           -> evaluateExpect()
 //   * how a set of spec results reads overall     -> verdictFor()
 //
-// The CLI is `acceptance-runner.mjs` (execute the specs locally, fold the result into
-// ci-feedback.json). CI no longer runs this file: the convention gate (which PR owes a spec, the
-// waiver) is spiculedata/acceptance-spec's convention.yml called from ci.yml, and the spec runner and
-// red-on-base proof are its run-specs.yml / base-check.yml called from acceptance.yml.
-// Format and workflow are documented in docs/acceptance-specs.md.
+// The CLIs are `acceptance-check.mjs` (the CI convention gate) and
+// `acceptance-runner.mjs` (execute the specs, fold the result into
+// ci-feedback.json). Both are thin; the rules are here. Convention, format and
+// the runner are documented in docs/acceptance-specs.md.
 
 /** The one file a spec directory must contain. */
 export const SPEC_FILE = 'spec.json';
+
+/** Labels that waive the requirement for a docs-only PR (#1382). */
+export const WAIVER_LABEL = 'acceptance-waived';
 
 const METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD']);
 /** How a spec (or one step) authenticates: nothing, a login session cookie, or HTTP basic. */
@@ -27,8 +31,28 @@ export const DEFAULT_BASE_PATH = '/rest/saiku/api';
 export const SESSION_PATH = '/rest/saiku/session';
 const KINDS = new Set(['api', 'ui']);
 const MATCH_OPERATORS = new Set(['equals', 'contains', 'matches', 'isNull', 'exists', 'type', 'length']);
+const MAX_CLOSING_ISSUES = 20;
 /** Ceiling on a repeated step (the limiter example needs ~70 probes, not endless). */
 export const MAX_REPEAT = 500;
+
+/**
+ * Issue numbers a PR body claims to close. Only the GitHub closing keywords,
+ * case-insensitively, each followed by `#<number>` or `owner/repo#<number>`.
+ * Anything else ("related to #7", a bare "#7") is deliberately not a claim.
+ * @param {unknown} body
+ * @returns {number[]} unique, ascending
+ */
+export function closingIssues(body) {
+  if (typeof body !== 'string' || body.length > 100000) return [];
+  const found = new Set();
+  const re = /\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\b[^\S\n]*:?[^\S\n]*(?:[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)?#(\d{1,7})/gi;
+  let m;
+  while ((m = re.exec(body)) !== null) {
+    found.add(Number(m[1]));
+    if (found.size >= MAX_CLOSING_ISSUES) break;
+  }
+  return [...found].sort((a, b) => a - b);
+}
 
 /**
  * Validate a parsed spec. Returns a list of human-readable problems; empty means
@@ -187,6 +211,100 @@ function isStatusSet(status) {
 function isPlainObject(v) {
   return v !== null && typeof v === 'object' && !Array.isArray(v);
 }
+
+/**
+ * Should this PR owe `acceptance/<issue>/` specs?
+ *
+ * @param {{body?: unknown, labels?: string[], presentIssues?: number[],
+ *          waivers?: string[]}} args
+ * @returns {{required: {issue: number, dir: string, present: boolean}[],
+ *            waived: boolean, reason: string, ok: boolean}}
+ */
+export function decideRequirement({
+  body = '',
+  labels = [],
+  presentIssues = [],
+  waivers = [WAIVER_LABEL],
+  enforceFrom = 0,
+  changedFiles
+} = {}) {
+  const closing = closingIssues(body);
+  const wanted = (waivers ?? []).map((l) => String(l).toLowerCase());
+  const applied = labels.map((l) => String(l).toLowerCase());
+  const waivedBy = wanted.find((l) => applied.includes(l));
+
+  if (closing.length === 0) {
+    return { required: [], grandfathered: [], waived: false, reason: 'no-closing-issue', ok: true };
+  }
+  // Rollout cutoff: issues opened before the convention existed owe no spec.
+  const grandfathered = closing.filter((issue) => issue < enforceFrom);
+  const enforced = closing.filter((issue) => issue >= enforceFrom);
+  if (enforced.length === 0) {
+    const reason = Number.isFinite(enforceFrom)
+      ? `grandfathered: issues before #${enforceFrom} are not enforced`
+      : 'grandfathered: enforcement is not configured (ACCEPTANCE_ENFORCE_FROM_ISSUE)';
+    return { required: [], grandfathered, waived: false, reason, ok: true };
+  }
+  const required = enforced.map((issue) => ({
+    issue,
+    dir: `acceptance/${issue}`,
+    present: presentIssues.includes(issue)
+  }));
+  if (waivedBy) {
+    // The waiver is for docs-only and tests-only PRs. When the change list is
+    // known, hold the PR to that; an empty list does not qualify.
+    if (Array.isArray(changedFiles)) {
+      const offending = nonWaivableFiles(changedFiles);
+      if (changedFiles.length === 0 || offending.length > 0) {
+        return {
+          required,
+          grandfathered,
+          waived: false,
+          waiverRejected: { files: offending },
+          reason: 'closing issue',
+          ok: required.every((r) => r.present)
+        };
+      }
+    }
+    return { required, grandfathered, waived: true, reason: `waived by label "${waivedBy}"`, ok: true };
+  }
+  return {
+    required,
+    grandfathered,
+    waived: false,
+    reason: 'closing issue',
+    ok: required.every((r) => r.present)
+  };
+}
+
+/**
+ * Paths a waived PR may touch: documentation, and tests. A tests-only change
+ * adds no product behaviour to specify, so it owes no acceptance spec either.
+ * Anything else (including a test file alongside a production change, in which
+ * case the production file still disqualifies the waiver) is held.
+ */
+const WAIVABLE_PATHS = [
+  /^docs\//,
+  /\.md$/i,
+  /^\.github\/ISSUE_TEMPLATE\//,
+  /(^|\/)src\/test\//, // Maven layout: src/test/java, src/test/resources
+  /(^|\/)__tests__\//,
+  /^saiku-ui\/e2e\//, // Playwright specs
+  /^tests\//,
+  /\.(test|spec)\.[cm]?[jt]sx?$/,
+  /\.e2e\.[cm]?[jt]s$/
+];
+
+/** The changed files that are neither documentation nor tests. */
+export const nonWaivableFiles = (files) => files.filter((f) => !WAIVABLE_PATHS.some((re) => re.test(String(f))));
+
+/** @deprecated name kept for existing imports; the waiver now also covers tests. */
+export const nonDocsFiles = nonWaivableFiles;
+
+/** The closing-keyword wording a PR body should use, for the check's message. */
+export const CONVENTION_HINT =
+  'Add acceptance/<issue>/spec.json (see acceptance/README.md and docs/acceptance-specs.md), or label the PR ' +
+  `${WAIVER_LABEL} if it is docs-only or tests-only.`;
 
 /**
  * `data[0].rows[1].name` -> ['data', '0', 'rows', '1', 'name'].

@@ -86,7 +86,7 @@ const REPRO_BY_JOB = {
   'ci :: ci scripts (python unittest)': "python3 -m unittest discover -s .github/scripts -p 'test_*.py' -v",
   'ci :: ci / flake-policy tests': 'node --test ".github/scripts/*.test.mjs"',
   'ci :: ci / acceptance convention':
-    'PR_BODY="Closes #<issue>" PR_LABELS="" ACCEPTANCE_ENFORCE_FROM_ISSUE=1 node <acceptance-spec checkout>/scripts/acceptance-check.mjs'
+    'PR_BODY="Closes #<issue>" PR_LABELS="" node .github/scripts/acceptance-check.mjs'
 };
 export const REPRO_BY_WORKFLOW = {
   'design-system': 'cd saiku-ui && npm ci && npm run build --workspace @concepttocloud/saiku-design-system',

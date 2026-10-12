@@ -510,41 +510,36 @@ jobs:
         run: node .github/scripts/flake-ledger.mjs quarantine --check
 
   # The `acceptance/<issue>/` convention: a PR that claims to close issue N (at or above
-  # the cutoff) must ship acceptance/N/spec.json, or carry the `acceptance-waived` label on a
-  # docs-or-tests-only change. The logic is spiculedata/acceptance-spec's convention.yml, called
-  # at a full commit SHA (same pin as acceptance.yml; bump both, see docs/acceptance-specs.md).
-  # The PR body and labels are untrusted text: upstream passes them through env:, never by
-  # interpolation into a script. Pull requests only (a push has no PR body, and the shared
-  # workflow refuses every other event).
-  #
-  # CHECK NAME. A called job reads `<caller job name> / <called job name>`; the called job is
-  # `acceptance convention`, so the caller's `name: ci` renders the required-by-the-rollup name
-  # `ci / acceptance convention` exactly as before. The caller job id stays `acceptance-convention`
-  # (the `ci` rollup below keys on it); only its display name is `ci`.
+  # the ACCEPTANCE_ENFORCE_FROM_ISSUE cutoff) must ship acceptance/N/spec.json, or carry
+  # the `acceptance-waived` label on a docs-or-tests-only change. The PR body and labels
+  # are untrusted text: they reach the script through env:, never by interpolation into
+  # it. Executing the specs against a base URL is acceptance.yml's job; this one only
+  # decides the convention. Pull requests only (a push has no PR body).
   acceptance-convention:
-    name: ci
+    name: ci / acceptance convention
     if: github.event_name == 'pull_request'
-    uses: spiculedata/acceptance-spec/.github/workflows/convention.yml@380780e255019826deb3901987f4004a454a7659
-    with:
-      mode: enforce
-      node-version: "24"
-      # The rollout cutoff: only issues numbered at or above it owe a spec. Unset (or not a number)
-      # means nothing is enforced yet. Still read from the repository variable (currently 2181).
-      enforce-from-issue: ${{ vars.ACCEPTANCE_ENFORCE_FROM_ISSUE }}
-      # Saiku's exact waiver list (JavaScript regular expressions, one per line). It REPLACES the shared
-      # built-in list, which also waives any e2e/ or test/ directory. Equivalent to the former local list
-      # (acceptance-spec.mjs WAIVABLE_PATHS); `\.md` was case-insensitive, hence [mM][dD].
-      # Guarded by .github/scripts/ci-wiring.test.mjs.
-      waivable-paths: |
-        ^docs/
-        \.[mM][dD]$
-        ^\.github/ISSUE_TEMPLATE/
-        (^|/)src/test/
-        (^|/)__tests__/
-        ^saiku-ui/e2e/
-        ^tests/
-        \.(test|spec)\.[cm]?[jt]sx?$
-        \.e2e\.[cm]?[jt]s$
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Two commits of history: the checkout is the merge of the PR into its base, so
+      # HEAD^1 is the base and `git diff HEAD^1 HEAD` is exactly the PR's change set.
+      # The waiver label is verified against it.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+      - name: The PR's changed files
+        run: git diff --name-only HEAD^1 HEAD > "$RUNNER_TEMP/changed-files.txt"
+      # ACCEPTANCE_ENFORCE_FROM_ISSUE is the rollout cutoff: only issues numbered at or
+      # above it owe a spec. Unset (or not a number) means nothing is enforced yet.
+      - name: A closing PR ships acceptance/<issue>/spec.json
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          ACCEPTANCE_ENFORCE_FROM_ISSUE: ${{ vars.ACCEPTANCE_ENFORCE_FROM_ISSUE }}
+        run: node .github/scripts/acceptance-check.mjs --changed-files "$RUNNER_TEMP/changed-files.txt"
 
   # Single aggregator status check. Branch protection requires only `ci`,
   # which makes the rule stable across:
