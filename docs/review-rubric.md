@@ -69,8 +69,10 @@ Use these in review comments so the author knows what must happen before merge.
 
 - Every behaviour change ships with a test that fails before the fix and passes
   after. For a PR that closes an issue, `acceptance/<issue>/spec.json` should be
-  the first commit and `acceptance / spec fails on base` should be green or
-  `not-run`; a spec that passes on base, or a `spec-already-green` label the
+  the first commit and `acceptance / spec fails on base` (from the pinned
+  spiculedata/acceptance-spec workflows, see docs/acceptance-specs.md) should be green or
+  `not-run`; a PR that bumps the pinned acceptance-spec SHA is `blocking` unless the commit
+  range was read and the check names in docs/acceptance-specs.md still exist; a spec that passes on base, or a `spec-already-green` label the
   reviewer did not see a human apply, is `blocking`. Match the stubbing style of the neighbouring tests in that package.
 - A test that asserts the implementation rather than the observable behaviour
   locks in the wrong contract. `non-blocking` unless it is actively harmful.

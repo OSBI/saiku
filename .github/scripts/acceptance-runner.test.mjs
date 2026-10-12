@@ -716,17 +716,18 @@ test('acceptance.yml stays on pull_request and runs against its own loopback bui
   assert.doesNotMatch(code, /pull_request_target/);
   assert.doesNotMatch(code, /workflow_run/, 'a workflow_run copy would run PR specs with default-branch secrets');
   // a credential is never a repository variable: variables are unmasked in logs
-  assert.doesNotMatch(code, /vars\.SAIKU_ACCEPTANCE_(USER|PASSWORD|API_KEY|TOKEN|SECRET)/);
+  assert.doesNotMatch(code, /vars\.(SAIKU_)?ACCEPTANCE_(USER|PASSWORD|API_KEY|TOKEN|SECRET)/);
   // The target is the PR's own launcher on loopback (SAIKU_DEMO=true), so the login is the PUBLIC demo
-  // pair as a literal: no secret override and no variable. A private target's credential can never
-  // be hard-coded here by accident because only admin/admin is accepted.
-  assert.doesNotMatch(code, /secrets\.SAIKU_ACCEPTANCE_/);
-  assert.match(code, /^ {2}SAIKU_ACCEPTANCE_USER: admin$/m);
-  assert.match(code, /^ {2}SAIKU_ACCEPTANCE_PASSWORD: admin$/m);
-  // pull requests run against the local build; the deployed URL is only a manual-dispatch option
+  // pair as a literal handed to the shared workflow's ACCEPTANCE_USER / ACCEPTANCE_PASSWORD secrets: no
+  // secret override and no variable. A private target's credential can never be hard-coded here by
+  // accident because only admin/admin is accepted.
+  assert.doesNotMatch(code, /secrets\.(SAIKU_)?ACCEPTANCE_/);
+  assert.match(code, /^ {6}ACCEPTANCE_USER: admin$/m);
+  assert.match(code, /^ {6}ACCEPTANCE_PASSWORD: admin$/m);
+  // pull requests always run against the local build; the shared workflows refuse any other event
   assert.match(code, /SAIKU_DEMO=true/);
   assert.match(code, /--host 127\.0\.0\.1/);
-  assert.match(code, /vars\.ACCEPTANCE_BASE_URL/);
+  assert.doesNotMatch(code, /workflow_dispatch|vars\.ACCEPTANCE_BASE_URL/);
   // no write scopes, no checkout of anything but the default merge ref, no token handed to the specs
   assert.match(code, /permissions:\n {2}contents: read\n/);
   assert.doesNotMatch(code, /(?:contents|issues|pull-requests|actions|checks|statuses|id-token): write/);

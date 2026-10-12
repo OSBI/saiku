@@ -11,7 +11,8 @@ PR into development
   |-- ci ............ the only REQUIRED check (build, ui, dist, scripts, flake-policy, ...)
   |-- docker ........ builds ghcr.io/spiculedata/saiku:pr-<n> and :<7-hex sha> (same-repo, path-filtered)
   |-- acceptance .... runs acceptance/<issue>/ specs (not required); if the PR adds or changes a spec,
-  |                   also proves it fails on the base build and passes here (not required)
+  |                   also proves it fails on the base build and passes here (not required). The logic is
+  |                   spiculedata/acceptance-spec's reusable workflows, pinned by SHA
   |-- preview env ... optional throwaway container at oss-pr-<n>.preview.saiku.bi (tailnet only)
   '-- ci feedback ... sticky PR comment + ci-feedback.json when anything above is red
 
@@ -67,11 +68,17 @@ commands.
   (read-only, job summary).
 - **Acceptance specs** ([acceptance-specs.md](acceptance-specs.md),
   [acceptance/README.md](../acceptance/README.md)). The gate is `ci / acceptance convention`
-  inside `ci.yml`. `acceptance.yml` builds the PR's launcher, starts it in the runner and executes the specs against it, and is not
-  required: with no base URL the specs are recorded `not-run`, never `pass`. When a PR adds or changes a
+  inside `ci.yml` (still this repository's own script). `acceptance.yml` calls the reusable workflows of
+  [spiculedata/acceptance-spec](https://github.com/spiculedata/acceptance-spec) at a pinned commit SHA
+  ([how to bump it](acceptance-specs.md#bumping-acceptance-spec)); it builds the PR's launcher, starts it in the
+  runner and executes the specs against it, and is not required: with no base URL the specs are recorded `not-run`,
+  never `pass`. Its checks are `acceptance / acceptance specs` (also republished as `acceptance / specs`, the name
+  the hive label watcher reads), `acceptance / detect changed specs`, `acceptance / specs on head`,
+  `acceptance / specs on base` and `acceptance / spec fails on base`. When a PR adds or changes a
   `spec.json`, `acceptance / spec fails on base` also demands the spec be red on the base branch's build and green on the
-  PR's (a spec that already passes on base proves nothing); only then does a second, cached, parallel Maven build run.
-  The escape hatch is the human-applied `spec-already-green` label. Not part of `ci`; fork PRs get `not-run`.
+  PR's (a spec that already passes on base proves nothing); only then do the head and base Maven builds run (the base
+  jar is cached on the base SHA). The escape hatch is the human-applied `spec-already-green` label. Not part of `ci`;
+  fork PRs get `not-run`.
 
 ## Images and previews
 
@@ -96,7 +103,7 @@ Every file under `.github/workflows/`.
 | `ci.yml` | PR, push to `development` / `phase-*`, `merge_group` | the required `ci` check; `saiku-dist` artifact; flake records | this page, [ci-flakes.md](ci-flakes.md) |
 | `docker.yml` | push to `development` / `main`, same-repo PR (path-filtered), manual | `:development`, `:main`, `:sha-<short>`, `:pr-<n>`, SBOM + provenance | [ci-images.md](ci-images.md) |
 | `promote-green.yml` | `ci` completed on `development`, manual (rollback) | retags `sha-<short>` as `:development-green` | [demo-deployment.md](demo-deployment.md) |
-| `acceptance.yml` | PR opened / synchronised / reopened | executes `acceptance/<issue>/` specs; results artifact; feeds `ci-feedback.json`; when a spec changed, `acceptance / spec fails on base` (red on base, green on head) | [acceptance-specs.md](acceptance-specs.md) |
+| `acceptance.yml` | PR opened / synchronised / reopened | thin callers of acceptance-spec's `run-specs.yml` and `base-check.yml` (pinned SHA): executes `acceptance/<issue>/` specs; results artifact; when a spec changed, `acceptance / spec fails on base` (red on base, green on head) | [acceptance-specs.md](acceptance-specs.md) |
 | `ci-feedback.yml` | `workflow_run` of the gating workflows | sticky PR comment, `ci-feedback.json` | [ci-feedback.md](ci-feedback.md) |
 | `flake-ledger.yml` | weekdays 05:41 UTC, manual | rolling flake rate in the job summary and an artifact | [ci-flakes.md](ci-flakes.md) |
 | `preview-env.yml` | `pull_request_target` into `development` | create / update / tear down the PR's preview | [ci-preview-environments.md](decisions/ci-preview-environments.md) |
@@ -185,13 +192,12 @@ Names only; never put a value in the repo or in a PR.
 | Name | Used by | Purpose | Set by | When unset |
 | --- | --- | --- | --- | --- |
 | `GITHUB_TOKEN` | most workflows | automatic per-run token | GitHub | n/a |
-| `GH_PACKAGES_TOKEN` | `ci`, `docker`, `release`, `release-prep`, `nightly-compliance`, `quality-report` | classic PAT with `read:packages`; reads the Spicule artifacts on GitHub Packages (the auto token cannot read cross-org) | owner | Maven cannot resolve dependencies; build jobs fail. Required. See AGENTS.md |
+| `GH_PACKAGES_TOKEN` | `ci`, `acceptance` (as the shared workflows' `BUILD_TOKEN`), `docker`, `release`, `release-prep`, `nightly-compliance`, `quality-report` | classic PAT with `read:packages`; reads the Spicule artifacts on GitHub Packages (the auto token cannot read cross-org) | owner | Maven cannot resolve dependencies; build jobs fail. Required. See AGENTS.md |
 | `CLAUDE_CODE_OAUTH_TOKEN` | `claude`, `claude-code-review`, `auto-review` | authenticates Claude Code | owner | those three workflows cannot run; nothing gating depends on them |
 | `NPM_TOKEN` | `release` (npm embed packages), `design-system` | npm Automation token for the `@concepttocloud` scope | owner | `npm publish` cannot authenticate; the design-system publish step and the release npm jobs fail |
 | `DOCS_SITE_PAT` | `release` (`docs-changelog`) | PAT with `repo` on `spiculedata/saiku-cloud` to open the changelog PR | owner | the job logs a warning and skips the docs PR; the release does not fail |
 | `PREVIEW_SSH_PRIVATE_KEY` | `preview-env`, `preview-command`, `preview-reaper` | SSH key authorised on the preview box only | owner | with `PREVIEW_SSH_TARGET` set, the host-access step fails; with it empty the workflows skip first |
 | `TAILSCALE_OAUTH_CLIENT_ID`, `TAILSCALE_OAUTH_SECRET` | same three | OAuth client owning `tag:ci`, to put the runner on the tailnet | owner | as above |
-| `SAIKU_ACCEPTANCE_USER`, `SAIKU_ACCEPTANCE_PASSWORD` | `acceptance` | override of the acceptance login | owner | optional. They default to the public demo login (`admin` / `admin`), so login-dependent specs run without them, fork PRs included. Set them only to aim acceptance at a private instance: as secrets (they override the default and are withheld from forks), never as variables (unmasked) |
 | `NVD_API_KEY` | `nightly-compliance` (OWASP profile, same as `mvn -P security verify`) | NVD feed API key | owner | optional; the job warns and the NVD download may be rate-limited or time out |
 
 **Variables**:
@@ -199,7 +205,7 @@ Names only; never put a value in the repo or in a PR.
 | Name | Used by | Purpose | When unset |
 | --- | --- | --- | --- |
 | `ACCEPTANCE_ENFORCE_FROM_ISSUE` | `ci` (`acceptance-convention`) | cutoff issue number: only issues at or above it owe `acceptance/N/spec.json`. Set to `2181` | nothing is enforced; closing PRs are reported `grandfathered` |
-| `ACCEPTANCE_BASE_URL` | `acceptance` | used only by a manual acceptance run with `target: deployed`; PRs run against their own build | no effect on PRs |
+| `ACCEPTANCE_BASE_URL` | none | unused since `acceptance.yml` moved to the shared workflows (it fed the removed manual `target: deployed` run) | no effect |
 | `GHCR_RETENTION_APPLY` | `ghcr-tag-retention` | `true` makes the scheduled sweep delete; manual dispatch uses its `apply` input | scheduled runs are dry runs |
 | `PREVIEW_SSH_TARGET` | `preview-env`, `preview-command`, `preview-reaper` | `user@host` of the preview box | all three preview workflows skip cleanly |
 | `PREVIEW_SSH_KNOWN_HOSTS` | same | pinned host key line(s) | the host-access step has no pinned key and fails when a target is set |
@@ -209,9 +215,13 @@ Names only; never put a value in the repo or in a PR.
 | `PREVIEW_MAX_ENVS`, `PREVIEW_IDLE_HOURS` | same | concurrent preview cap, idle teardown | defaults 3 and 24 |
 
 Why the acceptance values are what they are: the cutoff makes the gate apply only to issues
-numbered 2181 and up, so older work is not retroactively blocked. The base URL is the public demo
-because GitHub-hosted runners are not on the tailnet, so preview environments are unreachable
-from `acceptance.yml`, and the public demo is the only reachable instance.
+numbered 2181 and up, so older work is not retroactively blocked. Specs run against the PR's own
+launcher on loopback because GitHub-hosted runners are not on the tailnet (preview environments are
+unreachable) and the public demo is not redeployed when `development` moves.
+There is no acceptance-login secret: `acceptance.yml` passes the public demo login (`admin` / `admin`) as literals
+to the shared workflows' `ACCEPTANCE_USER` / `ACCEPTANCE_PASSWORD`, so login-dependent specs run, fork PRs
+included. To aim acceptance at a private instance, change those two lines to repository secrets, never variables
+(unmasked).
 
 **Labels** the workflows read or write:
 
