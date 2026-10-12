@@ -362,20 +362,50 @@ PRs written by people are not retried automatically. Add `needs-rework` to ask f
 
 ### Acceptance-test-driven builds
 
-Acceptance specs are enabled here. A PR that closes issue N ships `acceptance/N/spec.json`, a runnable version of the issue's criteria, committed before the fix. The rules apply to issues numbered 2181 and above.
+Acceptance specs are enforced here for issues numbered **2181 and above** (the `ACCEPTANCE_ENFORCE_FROM_ISSUE` repository variable; with it unset nothing is enforced). A PR that closes issue N (with a closing keyword in the body) ships `acceptance/N/spec.json`, a runnable version of the issue's criteria, committed before the fix. Older issues are reported as grandfathered. How to write one: [Writing and running a spec](https://github.com/spiculedata/acceptance-spec#writing-and-running-a-spec); every field: [spec-format.md](https://github.com/spiculedata/acceptance-spec/blob/main/docs/spec-format.md). Saiku specifics (paths, login, worked examples): [`acceptance/README.md`](acceptance/README.md) and [`docs/acceptance-specs.md`](docs/acceptance-specs.md).
 
-- `ci / acceptance convention` (inside `ci`) fails a PR that closes an issue without a spec.
-- The `acceptance` workflow runs the specs against that PR's own build (saiku#2235, merged).
-- A check named `acceptance / spec fails on base` is being added in saiku#2239. It will require each new spec to fail on the base branch and pass on the PR, since a spec that already passes proves nothing. A human-only `spec-already-green` label, planned in that PR and not yet created, will excuse a spec that is legitimately green on base.
-- The human-only `acceptance-waived` label waives the convention for one docs-only or tests-only PR.
+A minimal `api` spec, `acceptance/123/spec.json`. Relative paths sit under `/rest/saiku/api`; a path starting `/rest/` is used as is. Use `"auth": "session"` for endpoints behind login (CI uses the demo `admin` login). A `command` spec (`"kind": "command"`, `"command": ["node", "check.mjs"]`) works too; see `acceptance/2172`.
 
-Details are in [`acceptance/README.md`](acceptance/README.md) and [`docs/acceptance-specs.md`](docs/acceptance-specs.md).
+```json
+{
+  "issue": 123,
+  "title": "GET /rest/saiku/info answers anonymously with a JSON array",
+  "kind": "api",
+  "criteria": [{ "id": "C1", "given": "an anonymous caller", "then": "GET /rest/saiku/info returns 200 and an array" }],
+  "steps": [
+    {
+      "name": "info is anonymous and returns an array",
+      "criterion": "C1",
+      "request": { "method": "GET", "path": "/rest/saiku/info" },
+      "expect": { "status": 200, "json": { "$": { "type": "array" } } }
+    }
+  ]
+}
+```
+
+To run specs locally, point the shared runner at any running instance (clone [`spiculedata/acceptance-spec`](https://github.com/spiculedata/acceptance-spec); plain Node 22+, no install):
+
+```bash
+node <path-to>/acceptance-spec/scripts/acceptance-runner.mjs run --dir acceptance/123 \
+  --base-url http://localhost:8080 --base-path /rest/saiku/api
+```
+
+For `auth: session` specs also set `ACCEPTANCE_USER`, `ACCEPTANCE_PASSWORD` and `ACCEPTANCE_SESSION_PATH=/rest/saiku/session`. It prints `pass`, `fail` or `not-run` and exits 1 on a failure.
+
+What the checks mean:
+
+- `ci / acceptance convention` (inside `ci`, so it blocks the merge) fails a closing PR that has no spec.
+- `acceptance / acceptance specs` and `acceptance / specs` build the PR, start it on loopback with the demo data and run every spec. A spec that could not run is `not-run`, never a pass (for example, fork PRs have no build token, so `api` specs are not run there).
+- `acceptance / spec fails on base` runs only when the PR adds or changes a spec: it must fail on the base branch's build and pass on the PR's, since a spec that already passes proves nothing. The verdict also appears in each workflow's job summary. There is no sticky PR comment here.
+- The `acceptance` workflow runs in enforce mode but is not part of `ci`, and only `ci` is a required check, so a red result there is a signal for reviewers rather than a hard block.
+
+Two labels excuse the rules for one PR. Both are applied by a human only; agents never apply them. `acceptance-waived` waives the convention for a docs-only or tests-only PR (the check verifies the changed files). `spec-already-green` excuses a spec that legitimately passes on the base branch already; it never rescues a spec that fails on the PR. Apply either before pushing, or close and reopen the PR, because they are read from the event payload.
 
 ### What enforces this
 
 - **Required check.** The default branch, `development`, is protected and requires the aggregate `ci` check ([`ci.yml`](.github/workflows/ci.yml)). `ci` passes when every job under it succeeded or was legitimately skipped for the files changed, so a red build, UI or script job blocks the merge.
 - **Merge queue.** `development` uses GitHub's merge queue with the merge-commit method. `ci` runs again on the queued result before it lands.
-- **Other gates.** `issue-gate` guards approvals, and the risk-tier classifier labels every PR. The acceptance workflow runs the specs and is not part of `ci`, so a red result is a signal for reviewers rather than a hard block.
+- **Other gates.** `issue-gate` guards approvals, and the risk-tier classifier labels every PR. The `acceptance` workflow runs the specs and is not part of `ci`, so a red result there is a signal for reviewers rather than a hard block.
 - **Dependabot.** [`dependabot-automerge.yml`](.github/workflows/dependabot-automerge.yml) queues single-package patch bumps and GitHub Actions non-major bumps once `ci` is green. Everything else waits for a person.
 - **What merging does.** A merge to `development` lets `promote-green` move the public demo's image tag, once `ci` has passed on that commit ([`docs/demo-deployment.md`](docs/demo-deployment.md)). `main` is only for releases and hotfixes.
 
@@ -392,8 +422,8 @@ To run the tests locally, use `mvn verify` (what the `build` job gates on), plus
 | `blocked` | Waiting on something outside the task |
 | `needs-decision` | Waiting on a maintainer decision |
 | `needs-rework`, `rework-queued` | Sent back to the quality agent |
-| `acceptance-waived` | Waives the acceptance-spec convention (human only) |
-| `spec-already-green` | Planned in saiku#2239, human only, not yet created |
+| `acceptance-waived` | Waives the acceptance-spec convention for one docs-only or tests-only PR (human only) |
+| `spec-already-green` | Excuses a spec that legitimately passes on the base branch (human only) |
 
 ### Where the rules live
 
