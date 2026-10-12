@@ -1,0 +1,21 @@
+name: thin-caller-gate
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  drifted-caller:
+    uses: spiculedata/acceptance-spec/.github/workflows/convention.yml@aaf45861ba0f0647861cf9e62108a273a6dc1ed4
+    with:
+      mode: report
+      skip-outside-pull-request: true
+  pin-health-probe:
+    permissions:
+      contents: read
+      issues: write
+    uses: spiculedata/acceptance-spec/.github/workflows/pin-health.yml@e1ee02261986f510ca3be97f09b07546dd0614be
+    with:
+      open-issue: false
