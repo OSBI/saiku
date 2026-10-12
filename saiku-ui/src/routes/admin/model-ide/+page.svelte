@@ -141,8 +141,7 @@
 		cubeDiffResult = null;
 		void goto(`?open=${encodeURIComponent(s.name)}`, {
 			replaceState: true,
-			noScroll: true,
-			keepFocus: true
+			reset: false
 		});
 		if (buffers[s.name] !== undefined) return; // already open this session
 		loadingFile = true;

@@ -14,7 +14,7 @@
  *
  * SSR-safe: SvelteKit prerenders pages, so sessionStorage may be absent when
  * this module is first evaluated. We deliberately avoid importing
- * `$app/environment` to keep the store trivially unit-testable under vitest.
+ * `$app/env` to keep the store trivially unit-testable under vitest.
  */
 
 import { DEFAULT_MAX_OPTIONS, MAX_DECIMALS } from '$lib/cellset/decimalFormat';

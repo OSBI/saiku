@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// http.ts reads `browser` from $app/environment once, inside
+// http.ts reads `browser` from $app/env once, inside
 // installAuthInterceptor; mock it true for every test in this file except
 // the dedicated !browser case below, which mocks it false and imports fresh.
-vi.mock('$app/environment', () => ({ browser: true }));
+vi.mock('$app/env', () => ({ browser: true }));
 
 async function loadHttp() {
 	vi.resetModules();
@@ -34,16 +34,16 @@ describe('http.ts installAuthInterceptor', () => {
 
 	it('is a no-op when not running in the browser', async () => {
 		vi.resetModules();
-		vi.doMock('$app/environment', () => ({ browser: false }));
+		vi.doMock('$app/env', () => ({ browser: false }));
 		const http = await import('./http');
 		const fn = mockFetch(200);
 		http.installAuthInterceptor();
 		expect(globalThis.fetch).toBe(fn);
-		// vi.doUnmock would drop the module back to the real $app/environment
+		// vi.doUnmock would drop the module back to the real $app/env
 		// (not the hoisted vi.mock above) for every later dynamic import in
 		// this file; re-mock to true instead so the rest of the suite still
 		// gets a browser build.
-		vi.doMock('$app/environment', () => ({ browser: true }));
+		vi.doMock('$app/env', () => ({ browser: true }));
 	});
 
 	it('only patches fetch once across repeated calls', async () => {

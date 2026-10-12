@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Button, buttonVariants } from '$lib/components/ui';
-	import { base } from '$app/paths';
+	import { basePath } from '$lib/paths';
 	import { page } from '$app/state';
 	import { session } from '$lib/stores/session.svelte';
 	import { theme } from '$lib/stores/theme.svelte';
@@ -37,6 +37,7 @@
 	// those keyframes by name.
 	import '@concepttocloud/saiku-design-system/motion.css';
 	import '$lib/styles/app.css';
+	const base = basePath();
 
 	let { children } = $props();
 
