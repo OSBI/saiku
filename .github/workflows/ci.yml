@@ -523,9 +523,9 @@ jobs:
   # (the `ci` rollup below keys on it); only its display name is `ci`.
   acceptance-convention:
     name: ci
-    if: github.event_name == 'pull_request'
-    uses: spiculedata/acceptance-spec/.github/workflows/convention.yml@380780e255019826deb3901987f4004a454a7659
+    uses: spiculedata/acceptance-spec/.github/workflows/convention.yml@fe2d14cd213cd54783528303cb07fa7692eb08d9
     with:
+      skip-outside-pull-request: true
       mode: enforce
       node-version: "24"
       # The rollout cutoff: only issues numbered at or above it owe a spec. Unset (or not a number)
