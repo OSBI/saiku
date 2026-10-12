@@ -1,0 +1,8 @@
+{
+  "issue": 999991,
+  "title": "THROWAWAY: anonymous info endpoint answers 200 (passes on base, so it must be rejected)",
+  "kind": "api",
+  "auth": "none",
+  "criteria": [{ "id": "C1", "given": "a running launcher", "then": "/rest/saiku/info answers 200" }],
+  "steps": [{ "name": "info", "criterion": "C1", "request": { "method": "GET", "path": "/rest/saiku/info" }, "expect": { "status": 200 } }]
+}
