@@ -514,8 +514,9 @@ jobs:
   # docs-or-tests-only change. The logic is spiculedata/acceptance-spec's convention.yml, called
   # at a full commit SHA (same pin as acceptance.yml; bump both, see docs/acceptance-specs.md).
   # The PR body and labels are untrusted text: upstream passes them through env:, never by
-  # interpolation into a script. Pull requests only (a push has no PR body, and the shared
-  # workflow refuses every other event).
+  # interpolation into a script. Pull requests only (a push has no PR body): `skip-outside-pull-request`
+  # makes the called job skip itself on push / merge_group. Do not replace it with an `if:` on this job,
+  # a skipped calling job reports a bare check named `ci` that could shadow the required aggregate.
   #
   # CHECK NAME. A called job reads `<caller job name> / <called job name>`; the called job is
   # `acceptance convention`, so the caller's `name: ci` renders the required-by-the-rollup name

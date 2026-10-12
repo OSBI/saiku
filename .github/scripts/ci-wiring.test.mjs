@@ -58,7 +58,10 @@ test('the acceptance convention gate is the shared convention.yml, pinned, enfor
   // The rollup needs it by job id; the CHECK name `ci / acceptance convention` is `<caller name> / <called name>`
   // ("acceptance convention" upstream), so the caller's display name is `ci`.
   assert.match(block, /^ {4}name: ci$/m);
-  assert.match(block, /if: github\.event_name == 'pull_request'/, 'the shared workflow refuses every other event');
+  // NOT `if:` on this job: a skipped calling job reports a bare check named `ci`, shadowing the required one
+  // on push / merge_group. The shared workflow skips itself instead.
+  assert.doesNotMatch(block, /^ {4}if:/m);
+  assert.match(block, /skip-outside-pull-request: true/);
   const pin = block.match(/uses: spiculedata\/acceptance-spec\/\.github\/workflows\/convention\.yml@([0-9a-f]{40})$/m);
   assert.ok(pin, 'convention.yml is called at a full 40 character SHA');
   const acceptance = readFileSync(join(root, '.github', 'workflows', 'acceptance.yml'), 'utf8');
