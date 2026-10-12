@@ -1,0 +1,8 @@
+{
+  "issue": 99903,
+  "title": "Throwaway: red on base (marker file absent), green on head (present)",
+  "kind": "ui",
+  "criteria": [{ "id": "C1", "given": "the tree under test", "then": "docs/throwaway-proof-marker.md exists" }],
+  "command": ["node", "check.mjs"],
+  "timeoutSeconds": 60
+}
