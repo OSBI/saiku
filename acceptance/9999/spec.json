@@ -1,7 +1,0 @@
-{
-  "issue": 9999,
-  "title": "TEMPORARY throwaway: the spec-first script exists (red on base, green on head); will be removed",
-  "kind": "ui",
-  "criteria": [{ "id": "C1", "given": "the checkout", "then": "acceptance-base-check.mjs --list runs" }],
-  "command": ["node", "../../.github/scripts/acceptance-base-check.mjs", "--changed", "/dev/null", "--list"]
-}
