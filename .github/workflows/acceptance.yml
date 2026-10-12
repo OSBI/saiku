@@ -102,7 +102,7 @@ jobs:
   # label excuses a spec that legitimately passes on base.
   spec-first:
     name: acceptance
-    uses: spiculedata/acceptance-spec/.github/workflows/base-check.yml@65c4575aa9f7b7f64874c90a106db7f8456663e5
+    uses: spiculedata/acceptance-spec/.github/workflows/base-check.yml@9ed8c60fd6e77eef2c5019aa54e9b6e7353174e8
     with:
       mode: enforce
       node-version: "24"
