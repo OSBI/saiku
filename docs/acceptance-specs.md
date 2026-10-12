@@ -6,8 +6,9 @@ Ported from spiculedata/saiku-cloud (its #1382) and adapted to Saiku's REST surf
 **Where the logic lives.** Running the specs and the red-on-base, green-on-head proof are done by reusable
 workflows in [spiculedata/acceptance-spec](https://github.com/spiculedata/acceptance-spec) (a public repository,
 extracted from this one), called from `.github/workflows/acceptance.yml` at a pinned commit SHA. This repository
-keeps only what is Saiku's: the Maven build of the launcher, how it is started, the REST paths and the specs
-themselves. The convention gate and the spec/runner scripts are still local; see
+keeps only what is Saiku's: the Maven build of the launcher, how it is started, the REST paths, the waiver list and
+the specs themselves. The convention gate (`ci / acceptance convention`) is acceptance-spec's `convention.yml`,
+called from `ci.yml` at the same pin. Only the local runner is still here; see
 [What is still local](#what-is-still-local) and [Bumping acceptance-spec](#bumping-acceptance-spec).
 
 ## Why
@@ -97,60 +98,49 @@ announced.
 | Path | What |
 |---|---|
 | `acceptance/README.md` | The convention in one page, plus the shape of a spec |
-| `.github/scripts/acceptance-spec.mjs` | Every pure decision: closing keywords, validation, assertions, verdict |
-| `.github/scripts/acceptance-check.mjs` | CLI for the convention gate |
+| `.github/scripts/acceptance-spec.mjs` | The local runner's pure decisions: spec validation, assertions, verdict |
 | `.github/scripts/acceptance-runner.mjs` | Local CLI to execute specs and update ci-feedback.json. Not used by CI any more; `acceptance/2172` still exercises it |
-| `.github/scripts/acceptance-{check,runner}.test.mjs` | Offline unit tests (loopback HTTP server, temp dirs) |
+| `.github/scripts/acceptance-{spec,runner}.test.mjs` | Offline unit tests (loopback HTTP server, temp dirs) |
+| `.github/workflows/ci.yml` job `acceptance-convention` | The convention gate: calls acceptance-spec's `convention.yml` (pinned SHA, `mode: enforce`, cutoff from `vars.ACCEPTANCE_ENFORCE_FROM_ISSUE`, Saiku's `waivable-paths`). Guarded by `ci-wiring.test.mjs` |
 | `.github/scripts/acceptance-caller.test.mjs` | Guards `acceptance.yml`: the pinned SHA, `mode: enforce`, the check names, the trust model |
 | `.github/workflows/acceptance.yml` | Two thin callers of acceptance-spec's `run-specs.yml` and `base-check.yml` (pinned SHA) plus the Saiku settings: Maven build of the launcher, loopback FoodMart start, REST paths, demo login |
 | `spiculedata/acceptance-spec` `scripts/acceptance-base-check.mjs` | The red-on-base, green-on-head decision and its tests (removed from this repository) |
 
 ## What is still local
 
-Moving to the shared workflows was a refactor: nothing that is enforced today may weaken. Two things
-therefore stay in this repository for now.
+- **The local runner** (`acceptance-runner.mjs`, `acceptance-spec.mjs`, their tests). CI does not use them. They
+  stay because `acceptance/2172/check.mjs` imports them and asserts the `ci-feedback.json` `acceptance` key, which
+  the shared workflows do not write. The convention logic (closing keywords, cutoff, waiver) was removed from
+  `acceptance-spec.mjs` when the gate moved: it lives in acceptance-spec's `scripts/acceptance-check.mjs`.
+- **The waiver list**, passed to `convention.yml` as `waivable-paths` in `ci.yml` (it replaces the shared built-in
+  list, which also waives any `e2e/` or `test/` directory). Saiku waives only `docs/`, `*.md`,
+  `.github/ISSUE_TEMPLATE/`, `src/test/`, `__tests__/`, `saiku-ui/e2e/`, `tests/`, `*.test.*` / `*.spec.*` and
+  `*.e2e.*`. `.md` was matched case-insensitively before; the shared list takes no regex flags, so it is spelled
+  `\.[mM][dD]$`. `ci-wiring.test.mjs` pins both what is waivable and what is not (`saiku-core/e2e/`, `test/`).
+- **The cutoff** is still the repository variable `ACCEPTANCE_ENFORCE_FROM_ISSUE` (`2181`), passed as the
+  `enforce-from-issue` input.
+- One cosmetic difference from the former local script: the closing hint line now points at acceptance-spec's
+  `docs/spec-format.md` instead of this repository's docs. The error lines and exit status are identical.
 
-- **The convention gate, `ci / acceptance convention`** (a job in `ci.yml`, inside the required `ci` rollup, run by
-  `.github/scripts/acceptance-check.mjs`). acceptance-spec's `convention.yml` waives a PR whose files sit under
-  *any* `e2e/` directory (and a top-level `test/`), where Saiku waives only `saiku-ui/e2e/` and `tests/`. The
-  waiver list is not an input upstream, so adopting it as is would let a PR that adds product code under, say,
-  `saiku-core/e2e/` take the `acceptance-waived` label. Upstream PR [spiculedata/acceptance-spec#3](https://github.com/spiculedata/acceptance-spec/pull/3) adds a
-  `waivable-paths` input; once it is merged and this repository re-pins, the gate can move to `convention.yml`
-  with Saiku's exact list.
-- **The scripts `acceptance-check.mjs`, `acceptance-runner.mjs`, `acceptance-spec.mjs` and their tests.** The gate
-  needs the first and the last. `acceptance/2172/check.mjs` (the spec for the convention itself) imports all three
-  and asserts the local behaviour, including the `ci-feedback.json` `acceptance` key that upstream dropped.
-
-Known defect at the pinned SHA: **the base launcher cache does not work yet.** At `65c4575` upstream's
-`base-cache-paths` builds the path `base/./acceptance-launcher.jar`, which `actions/cache` rejects (a warning,
-nothing saved), so a re-push to a spec-changing PR rebuilds the base launcher (~9 min, in parallel with the head
-build, so the wall clock is about the same). `base-cache-paths` is already set here; the cache starts working
-when this repository re-pins to a commit that includes
-[spiculedata/acceptance-spec#4](https://github.com/spiculedata/acceptance-spec/pull/4). Verified there: with that
-fix a second push logged `Cache hit for: acceptance-base-v1-...` and skipped the base build.
-
-Dropped on purpose by the move, none of it enforced:
-
-- The `acceptance` key is no longer written into a `ci-feedback.json` uploaded by the acceptance run. Nothing in this
-  repository or in the hive tooling reads that artifact (`ci-feedback.yml` builds its own document from the API and
-  never downloads a PR's artifacts). The results JSON is still uploaded as `acceptance-results-<run id>`.
-- The manual `workflow_dispatch` run with `target: deployed` against the `ACCEPTANCE_BASE_URL` variable. The shared
-  workflows refuse every event but `pull_request`.
-- The artifact names (`acceptance-results-<PR number>` and friends) now carry the run id.
+The base launcher cache works since the pin `380780e` (spiculedata/acceptance-spec#4: the cache path was
+`base/./acceptance-launcher.jar`, which `actions/cache` rejects, so nothing was saved). On the second push to a
+spec-changing PR `acceptance / specs on base` logs a cache hit and skips the base Maven build.
 
 ## Bumping acceptance-spec
 
-`acceptance.yml` calls two workflows of `spiculedata/acceptance-spec`, both pinned to the same **full 40-character
-commit SHA** of that repository's `main` (never a branch or a tag; `acceptance-caller.test.mjs` fails otherwise).
+`acceptance.yml` calls two workflows of `spiculedata/acceptance-spec` and `ci.yml` calls a third (`convention.yml`), all
+pinned to the same **full 40-character commit SHA** of that repository's `main` (never a branch or a tag;
+`acceptance-caller.test.mjs` and `ci-wiring.test.mjs` fail otherwise). Current pin: `380780e255019826deb3901987f4004a454a7659`.
 To bump:
 
 1. Read what changed: `git log <old>..<new> -- scripts .github/workflows` in a checkout of acceptance-spec, and its
    `README.md` ("Migrating from saiku's copy", inputs, trust model).
-2. Replace the SHA in **both** `uses:` lines of `.github/workflows/acceptance.yml` (one find-and-replace).
+2. Replace the SHA in the `uses:` lines of `.github/workflows/acceptance.yml` (two) and `.github/workflows/ci.yml` (one) and
+   in "Current pin" above (one find-and-replace over `.github/workflows` and this file).
 3. Open a PR. A spec-changing PR exercises all four called jobs; check that `acceptance / acceptance specs`,
    `acceptance / detect changed specs`, `acceptance / specs on base`, `acceptance / spec fails on base` and
-   `acceptance / specs` all exist and pass, since other things key on those names (the hive label watcher reads
-   `acceptance / specs`).
+   `acceptance / specs` all exist and pass, and so does `ci / acceptance convention`, since other things key on
+   those names (the hive label watcher reads `acceptance / specs`; `ci-feedback.mjs` keys on `ci / acceptance convention`).
 
 The called jobs' names are part of acceptance-spec's interface. If a bump renames one, either change the caller or
 update every reference listed in the PR.
@@ -309,8 +299,8 @@ change ([`docs/ci-feedback.md`](ci-feedback.md)), and `.github/ci-feedback.schem
 ## Running them locally
 
 ```bash
-# the convention, exactly as CI decides it
-PR_BODY="Closes #2172" PR_LABELS="" ACCEPTANCE_ENFORCE_FROM_ISSUE=1 node .github/scripts/acceptance-check.mjs
+# the convention, as CI decides it (acceptance-spec's copy; pass Saiku's waivable-paths from ci.yml to try a waiver)
+PR_BODY="Closes #2172" PR_LABELS="" ACCEPTANCE_ENFORCE_FROM_ISSUE=1 node <acceptance-spec>/scripts/acceptance-check.mjs
 
 # the specs against anything with a base URL (the local runner; CI uses acceptance-spec's copy)
 SAIKU_ACCEPTANCE_USER=admin SAIKU_ACCEPTANCE_PASSWORD=admin \
@@ -325,7 +315,7 @@ ACCEPTANCE_USER=admin ACCEPTANCE_PASSWORD=admin ACCEPTANCE_SESSION_PATH=/rest/sa
 # the red-on-base proof: acceptance-spec's scripts/acceptance-base-check.mjs (see its README)
 
 # the tooling's own tests (also `ci / flake-policy tests`)
-node --test ".github/scripts/acceptance-check.test.mjs" ".github/scripts/acceptance-runner.test.mjs" ".github/scripts/acceptance-caller.test.mjs"
+node --test ".github/scripts/acceptance-spec.test.mjs" ".github/scripts/acceptance-runner.test.mjs" ".github/scripts/acceptance-caller.test.mjs" ".github/scripts/ci-wiring.test.mjs"
 ```
 
 ## Provenance
@@ -345,5 +335,5 @@ the allow-listed spec environment, the same-origin restriction for api specs, an
 - The waiver's "tests" now include `saiku-ui/e2e/`.
 - The convention job runs for pull requests only (a push has no PR body) and is inside `ci.yml`'s rollup.
 - No preview/validation coupling.
-- The running of specs and the red-on-base proof were later extracted into `spiculedata/acceptance-spec` and
+- The convention gate, the running of specs and the red-on-base proof were later extracted into `spiculedata/acceptance-spec` and
   are called from `acceptance.yml` at a pinned SHA (see [Bumping acceptance-spec](#bumping-acceptance-spec)).

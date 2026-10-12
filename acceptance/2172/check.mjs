@@ -4,6 +4,9 @@
 // #2172 is CI tooling, so there is no endpoint to call: the contract is that the
 // gate holds a closing PR to the convention, that the runner authenticates the way
 // Saiku does, and that a failed spec is recorded as a failure in ci-feedback.json.
+// The gate itself is spiculedata/acceptance-spec's convention.yml, called from ci.yml (its decision
+// logic and tests live there), so C1/C2 assert what THIS repository owns: that ci.yml calls it pinned,
+// enforcing, with the cutoff variable and Saiku's exact waivable-paths list.
 // Exit non-zero on the first broken clause, with the reason on stderr, so the
 // runner's "exit code" detail says what broke. Ported in spirit from
 // spiculedata/saiku-cloud acceptance/1382.
@@ -18,7 +21,6 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const scripts = join(here, '..', '..', '.github', 'scripts');
 
-const { check } = await import(join(scripts, 'acceptance-check.mjs'));
 const { attachResults, runSpecs } = await import(join(scripts, 'acceptance-runner.mjs'));
 const { validateSpec } = await import(join(scripts, 'acceptance-spec.mjs'));
 
@@ -32,7 +34,34 @@ function repoWith(issue, spec) {
   return root;
 }
 
-const spec = { issue: 99, title: 'a contract', kind: 'api', criteria: [{ id: 'C1', then: 'it holds' }], steps: [] };
+/** The text of ci.yml's `acceptance-convention` job (the caller of the shared convention gate). */
+function conventionJob() {
+  const lines = readFileSync(join(here, '..', '..', '.github', 'workflows', 'ci.yml'), 'utf8').split('\n');
+  const start = lines.findIndex((line) => line === '  acceptance-convention:');
+  assert.ok(start >= 0, 'ci.yml has an acceptance-convention job');
+  let end = lines.length;
+  for (let i = start + 1; i < lines.length; i += 1) {
+    if (/^ {2}[a-z][\w-]*:\s*$/.test(lines[i])) {
+      end = i;
+      break;
+    }
+  }
+  return lines.slice(start, end).filter((line) => !line.trim().startsWith('#')).join('\n');
+}
+
+/** Saiku's waivable-paths list, compiled the way the shared gate compiles it (one JS regex per line). */
+function waivablePaths(job) {
+  const all = job.split('\n');
+  const start = all.findIndex((line) => line.trim() === 'waivable-paths: |');
+  assert.ok(start >= 0, 'the gate passes waivable-paths');
+  const indent = all[start].length - all[start].trimStart().length;
+  const patterns = [];
+  for (let i = start + 1; i < all.length; i += 1) {
+    if (all[i].trim() !== '' && all[i].length - all[i].trimStart().length <= indent) break;
+    if (all[i].trim() !== '') patterns.push(new RegExp(all[i].trim()));
+  }
+  return patterns;
+}
 
 const failures = [];
 const claim = async (id, fn) => {
@@ -43,23 +72,26 @@ const claim = async (id, fn) => {
   }
 };
 
-// C1 - a closing PR with no spec for it is held, and told what is missing.
+// C1 - a closing PR with no spec for it is held; with no cutoff configured nothing is enforced.
 await claim('C1', () => {
-  const result = check({ repoRoot: repoWith(99, null), body: 'Closes #99', enforceFrom: 1 });
-  assert.equal(result.ok, false);
-  assert.match(result.problems.join('\n'), /closes #99 but adds no acceptance\/99\/spec.json/);
-  // rollout safety: with no cutoff configured nothing is enforced
-  const unset = check({ repoRoot: repoWith(99, null), body: 'Closes #99', enforceFrom: Number.POSITIVE_INFINITY });
-  assert.equal(unset.ok, true);
+  const job = conventionJob();
+  assert.match(job, /uses: spiculedata\/acceptance-spec\/\.github\/workflows\/convention\.yml@[0-9a-f]{40}$/m, 'the shared gate, at a full SHA');
+  assert.match(job, /mode: enforce/, 'a missing spec fails the job');
+  assert.match(job, /enforce-from-issue: \$\{\{ vars\.ACCEPTANCE_ENFORCE_FROM_ISSUE \}\}/, 'the cutoff stays a repository variable (unset enforces nothing)');
+  assert.match(job, /name: ci$/m, 'renders as the check `ci / acceptance convention`, inside the ci rollup');
+  assert.match(job, /if: github\.event_name == 'pull_request'/);
 });
 
-// C2 - shipping the spec satisfies it; a verified docs-only waiver satisfies it too.
+// C2 - a docs-or-tests-only change may take the waiver; a production file never does.
 await claim('C2', () => {
-  assert.equal(check({ repoRoot: repoWith(99, spec), body: 'Closes #99', enforceFrom: 1 }).ok, true);
-  const waivedDocs = check({ repoRoot: repoWith(99, null), body: 'Closes #99', labels: ['acceptance-waived'], enforceFrom: 1, changedFiles: ['docs/x.md'] });
-  assert.equal(waivedDocs.ok, true);
-  const waivedProd = check({ repoRoot: repoWith(99, null), body: 'Closes #99', labels: ['acceptance-waived'], enforceFrom: 1, changedFiles: ['saiku-core/saiku-web/src/main/java/A.java'] });
-  assert.equal(waivedProd.ok, false);
+  const patterns = waivablePaths(conventionJob());
+  const waivable = (path) => patterns.some((re) => re.test(path));
+  for (const ok of ['docs/x.md', 'README.MD', 'saiku-core/src/test/java/A.java', 'saiku-ui/e2e/a.spec.ts', 'tests/x.sh', 'a.test.ts']) {
+    assert.equal(waivable(ok), true, `${ok} is docs or tests`);
+  }
+  for (const no of ['saiku-core/saiku-web/src/main/java/A.java', 'saiku-core/e2e/x.js', 'test/x.java', '.github/workflows/ci.yml', 'scripts/run.sh']) {
+    assert.equal(waivable(no), false, `${no} is not waivable`);
+  }
 });
 
 // C3 - session login: log in once, then send the cookie. No credentials means not-run.

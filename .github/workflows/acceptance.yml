@@ -10,8 +10,8 @@ name: acceptance
 # docs/acceptance-specs.md. Do not point `uses:` at a branch or tag.
 #
 # The GATE is `ci / acceptance convention` inside ci.yml: a PR that closes issue N must ship
-# acceptance/N/spec.json. It still runs from this repository's own .github/scripts/acceptance-check.mjs
-# (see docs/acceptance-specs.md, "What is still local").
+# acceptance/N/spec.json. It is acceptance-spec's convention.yml, called from ci.yml at the same pin with
+# Saiku's waivable-paths (see docs/acceptance-specs.md, "What is still local").
 #
 # CHECK NAMES. A reusable workflow's checks are named `<caller job name> / <called job name>`. Every caller
 # job below has `name: acceptance`, so the called jobs read `acceptance / detect changed specs`,
@@ -48,7 +48,7 @@ jobs:
   # every spec against it. Check name: `acceptance / acceptance specs`.
   run-specs:
     name: acceptance
-    uses: spiculedata/acceptance-spec/.github/workflows/run-specs.yml@65c4575aa9f7b7f64874c90a106db7f8456663e5
+    uses: spiculedata/acceptance-spec/.github/workflows/run-specs.yml@380780e255019826deb3901987f4004a454a7659
     with:
       mode: enforce
       node-version: "24"
@@ -102,7 +102,7 @@ jobs:
   # label excuses a spec that legitimately passes on base.
   spec-first:
     name: acceptance
-    uses: spiculedata/acceptance-spec/.github/workflows/base-check.yml@65c4575aa9f7b7f64874c90a106db7f8456663e5
+    uses: spiculedata/acceptance-spec/.github/workflows/base-check.yml@380780e255019826deb3901987f4004a454a7659
     with:
       mode: enforce
       node-version: "24"
@@ -115,9 +115,8 @@ jobs:
       ready-timeout: 300
       base-path: /rest/saiku/api
       session-path: /rest/saiku/session
-      # Cache the base launcher jar on the base SHA. Inert at the pinned SHA (actions/cache rejects the path
-      # upstream builds for working-directory "."): fixed by spiculedata/acceptance-spec#4, effective once
-      # this file is re-pinned to a commit that has it.
+      # Cache the base launcher jar on the base SHA. Works since acceptance-spec#4 (380780e): before that the
+      # cache path built for working-directory "." was rejected by actions/cache and nothing was saved.
       base-cache-paths: |
         acceptance-launcher.jar
       # Keep identical to run-specs above (guarded by .github/scripts/acceptance-caller.test.mjs).
