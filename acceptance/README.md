@@ -15,6 +15,12 @@ already passes on base (it proves nothing). A human may excuse a legitimate exce
 
 Full format reference, assertion list, authentication and rollout: [`docs/acceptance-specs.md`](../docs/acceptance-specs.md).
 
+The specs are executed, and the red-on-base proof is made, by the reusable workflows in
+[spiculedata/acceptance-spec](https://github.com/spiculedata/acceptance-spec), called from
+`.github/workflows/acceptance.yml` at a pinned commit SHA (how to bump it:
+[Bumping acceptance-spec](../docs/acceptance-specs.md#bumping-acceptance-spec)). The convention gate is still this
+repository's own `acceptance-check.mjs`.
+
 ## Layout
 
 ```
@@ -53,15 +59,18 @@ contract runs the same file.
 
 Relative step paths resolve under `/rest/saiku/api`; a path that starts with `/rest/` (for example
 `/rest/saiku/info`) is used as it is. Credentials never live in a spec: `"auth": "session"` logs in at
-`POST /rest/saiku/session` with `SAIKU_ACCEPTANCE_USER` / `SAIKU_ACCEPTANCE_PASSWORD` from the environment and
+`POST /rest/saiku/session` with `ACCEPTANCE_USER` / `ACCEPTANCE_PASSWORD` from the environment and
 sends the session cookie on the later steps; `"basic"` sends HTTP basic instead. A `ui` spec carries a `command`
-(argv, never a shell string) which runs in its own directory with `SAIKU_BASE_URL` set when a base URL is
-configured: a Playwright suite, or any CLI check (see `acceptance/2172`).
+(argv, never a shell string) which runs in its own directory with `ACCEPTANCE_BASE_URL` set when a base URL is
+configured: a Playwright suite, or any CLI check (see `acceptance/2172`). In CI the credentials are
+`ACCEPTANCE_USER` / `ACCEPTANCE_PASSWORD` (the shared runner); only the local runner below still reads the
+`SAIKU_ACCEPTANCE_*` names, so do not write `{{env.SAIKU_ACCEPTANCE_USER}}` into a spec.
 
 ## Running them
 
 ```bash
-# against a running launcher, e.g. ./run.sh on :8080 with the FoodMart demo
+# against a running launcher, e.g. ./run.sh on :8080 with the FoodMart demo (the local runner; CI uses
+# acceptance-spec's copy of it, with ACCEPTANCE_USER / ACCEPTANCE_PASSWORD)
 SAIKU_ACCEPTANCE_USER=admin SAIKU_ACCEPTANCE_PASSWORD=admin \
   node .github/scripts/acceptance-runner.mjs run --all --base-url http://localhost:8080 \
   --out acceptance-results.json --feedback ci-feedback.json
@@ -72,7 +81,8 @@ PR_BODY="Closes #818" ACCEPTANCE_ENFORCE_FROM_ISSUE=1 node .github/scripts/accep
 
 The runner never reports "pass" for something it could not run: no base URL, an invalid spec, missing
 credentials or an unreachable host is recorded `not-run` (or `fail` when the host answered and refused) with a
-reason. Results are folded into `ci-feedback.json` under the optional `acceptance` key.
+reason. The local runner can fold the results into `ci-feedback.json` under the optional `acceptance` key (the CI
+run no longer does).
 
 ## Rules
 

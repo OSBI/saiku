@@ -89,7 +89,7 @@ document the builder can emit against it, so the schema and the emitter cannot d
 | `previewUrl` | Reserved; null today. |
 | `feedbackUrl` | The `ci feedback` run holding this document. |
 | `filteredNoise[]` | Samples of the deprecation notices that were dropped. |
-| `acceptance` | Optional. Added by `acceptance-runner.mjs`; see [`docs/acceptance-specs.md`](acceptance-specs.md). |
+| `acceptance` | Optional. Added by the local `acceptance-runner.mjs` only; the CI acceptance run (shared acceptance-spec workflows) no longer writes it. See [`docs/acceptance-specs.md`](acceptance-specs.md). |
 
 **Version policy.** Adding an optional field does not change `schemaVersion`; removing, renaming or re-typing a
 field does, and the change must update the schema, the emitter, this table and the tests in one PR. Consumers

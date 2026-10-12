@@ -3,6 +3,13 @@
 Ported from spiculedata/saiku-cloud (its #1382) and adapted to Saiku's REST surface; see
 [Provenance](#provenance). Tracked here by issue #2172.
 
+**Where the logic lives.** Running the specs and the red-on-base, green-on-head proof are done by reusable
+workflows in [spiculedata/acceptance-spec](https://github.com/spiculedata/acceptance-spec) (a public repository,
+extracted from this one), called from `.github/workflows/acceptance.yml` at a pinned commit SHA. This repository
+keeps only what is Saiku's: the Maven build of the launcher, how it is started, the REST paths and the specs
+themselves. The convention gate and the spec/runner scripts are still local; see
+[What is still local](#what-is-still-local) and [Bumping acceptance-spec](#bumping-acceptance-spec).
+
 ## Why
 
 Green CI is not the same as "this PR did what its issue asked". Unit tests build objects by hand; nothing
@@ -12,8 +19,8 @@ the fix:
 - the issue templates have an **Acceptance tests** section, so a worker writes the check before the patch;
 - a PR that closes issue N **must** ship `acceptance/N/spec.json`; `ci / acceptance convention` (inside the
   required `ci` rollup) fails without it, once the rollout cutoff is set;
-- `.github/scripts/acceptance-runner.mjs` executes those specs against a base URL and folds the outcome into
-  `ci-feedback.json`.
+- `acceptance / specs` (`acceptance.yml`, which calls acceptance-spec's `run-specs.yml`) executes those specs
+  against the PR's own launcher.
 
 ## The convention
 
@@ -21,7 +28,7 @@ the fix:
 # 1. the issue: fill in "Acceptance tests" when filing it
 # 2. the fix: acceptance/<issue>/spec.json, derived from those criteria
 # 3. the gate: ci / acceptance convention (inside ci.yml)
-# 4. the run:  acceptance / specs (acceptance.yml) against a base URL
+# 4. the run:  acceptance / specs (acceptance.yml, shared run-specs.yml) against the PR's own launcher
 ```
 
 One directory per **issue**, not per PR: a spec belongs to the contract, so a later change that regresses it
@@ -40,8 +47,8 @@ if the label were absent, and the check says which files disqualify it. The chan
 
 ### Spec first: red on base, green on head
 
-The convention gate only proves a spec **exists**. `acceptance / spec fails on base` (a job in `acceptance.yml`)
-proves it was worth writing: for every `acceptance/<issue>/spec.json` a PR **adds or changes**, the spec must
+The convention gate only proves a spec **exists**. `acceptance / spec fails on base` (acceptance-spec's
+`base-check.yml`, called by `acceptance.yml`) proves it was worth writing: for every `acceptance/<issue>/spec.json` a PR **adds or changes**, the spec must
 
 1. **fail** when run against the build of the PR's **base** branch (the commit the PR is merged into), and
 2. **pass** against the PR's own build.
@@ -56,13 +63,14 @@ How it runs, and what it costs:
 | Piece | Behaviour |
 |---|---|
 | Trigger | Only when the PR's merge checkout differs from its base in some `acceptance/*/spec.json` (a deleted spec is not checked). A PR touching no spec pays nothing: `detect` is a few seconds and the rest is skipped. |
-| Base build | `acceptance / specs on base` builds the base launcher (same Maven command as the head job) in **parallel** with `acceptance / specs`, then runs only the changed specs against it. The launcher jar is cached (`actions/cache`) on the base SHA, so a re-push to the same PR, which has the same base, skips the ~5 min build. A cache created by one PR is not visible to another PR, so the first run per PR and per base SHA pays the build. |
-| Specs and base tree | The runner and the spec files come from the PR. The code under test, and the working directory of `command` specs, come from the base checkout, with the PR's spec directories copied over it. |
+| Jobs | `acceptance / detect changed specs` (seconds), then `acceptance / specs on head` and `acceptance / specs on base` in **parallel**, then `acceptance / spec fails on base`. The workflow is self-contained: it builds and runs both sides itself, so the PR's launcher is built twice per spec-changing PR (once by `acceptance / acceptance specs`, once by `specs on head`). Upstream has an opt-in `share-build` that avoids that at the price of running the base side after the head side; it is not turned on here. |
+| Base build | `acceptance / specs on base` builds the base launcher (same Maven command as the head job) and runs only the changed specs against it. The launcher jar (`acceptance-launcher.jar`) is cached (`actions/cache`) on the base SHA and a fingerprint of the build settings, so a re-push to the same PR, which has the same base, skips the ~5 min build. A cache created by one PR is not visible to another PR, so the first run per PR and per base SHA pays the build. |
+| Specs and base tree | The runner comes from acceptance-spec at the pinned SHA; the spec files come from the PR. The code under test, and the working directory of `command` specs, come from the base checkout, with the PR's spec directories copied over it. |
 | Verdict | `acceptance / spec fails on base` waits for both runs. Per spec: **red on base and green on head** passes; **passes on base** fails; **fails on head** fails; a base run that errored or recorded nothing fails (the proof is unmade, not assumed). |
-| Forks | The Maven token is withheld from fork PRs, so the base launcher cannot be built. Api specs are `not-run` on both sides and the check reports `not-run` (a warning, green by design like `acceptance / specs`), **never** `pass`. `command` specs need no server and still run on both sides. A maintainer should re-prove a fork's specs on a same-repository branch. |
-| Security | `pull_request` only, `contents: read`, no write scope, no secret beyond the `GH_PACKAGES_TOKEN` the head job already uses. The PR's spec commands run with the same allow-listed environment as in the head job. |
+| Forks | The Maven token is withheld from fork PRs, so the base launcher cannot be built. Api specs are `not-run` on both sides and the check reports `not-run` (a warning, green by design like `acceptance / specs`), **never** `pass`. Upstream skips the build whenever the token is absent, even if a cached base jar exists. `command` specs need no server and still run on both sides. A maintainer should re-prove a fork's specs on a same-repository branch. |
+| Security | `pull_request` only, `contents: read`, no write scope, no secret beyond the `GH_PACKAGES_TOKEN` (handed over as the shared workflows' `BUILD_TOKEN`). The PR's spec commands run with the same allow-listed environment as in the head job. |
 
-**Not required.** Like `acceptance / specs`, it is a separate workflow and is not in the `ci` rollup, so it reports
+**Not required.** Like `acceptance / specs`, it is a separate workflow (`mode: enforce`, so it goes red, but it is not in the `ci` rollup), so it reports
 red but does not by itself block a merge unless the repository's rules make it a required status check
 (not verified or assumed here; see [ci-overview.md](ci-overview.md)). Its failures reach the PR through the sticky
 `ci feedback` comment.
@@ -91,10 +99,51 @@ announced.
 | `acceptance/README.md` | The convention in one page, plus the shape of a spec |
 | `.github/scripts/acceptance-spec.mjs` | Every pure decision: closing keywords, validation, assertions, verdict |
 | `.github/scripts/acceptance-check.mjs` | CLI for the convention gate |
-| `.github/scripts/acceptance-runner.mjs` | CLI to execute specs and update ci-feedback.json |
+| `.github/scripts/acceptance-runner.mjs` | Local CLI to execute specs and update ci-feedback.json. Not used by CI any more; `acceptance/2172` still exercises it |
 | `.github/scripts/acceptance-{check,runner}.test.mjs` | Offline unit tests (loopback HTTP server, temp dirs) |
-| `.github/scripts/acceptance-base-check.mjs` (+ `.test.mjs`) | The red-on-base, green-on-head decision; its tests also run the real runner against two loopback servers |
-| `.github/workflows/acceptance.yml` | Builds the PR's launcher, starts it in the runner (FoodMart demo) and runs the specs against it; when a spec changed, also the base-side proof |
+| `.github/scripts/acceptance-caller.test.mjs` | Guards `acceptance.yml`: the pinned SHA, `mode: enforce`, the check names, the trust model |
+| `.github/workflows/acceptance.yml` | Two thin callers of acceptance-spec's `run-specs.yml` and `base-check.yml` (pinned SHA) plus the Saiku settings: Maven build of the launcher, loopback FoodMart start, REST paths, demo login |
+| `spiculedata/acceptance-spec` `scripts/acceptance-base-check.mjs` | The red-on-base, green-on-head decision and its tests (removed from this repository) |
+
+## What is still local
+
+Moving to the shared workflows was a refactor: nothing that is enforced today may weaken. Two things
+therefore stay in this repository for now.
+
+- **The convention gate, `ci / acceptance convention`** (a job in `ci.yml`, inside the required `ci` rollup, run by
+  `.github/scripts/acceptance-check.mjs`). acceptance-spec's `convention.yml` waives a PR whose files sit under
+  *any* `e2e/` directory (and a top-level `test/`), where Saiku waives only `saiku-ui/e2e/` and `tests/`. The
+  waiver list is not an input upstream, so adopting it as is would let a PR that adds product code under, say,
+  `saiku-core/e2e/` take the `acceptance-waived` label. The gate moves once upstream can be told the exact list.
+- **The scripts `acceptance-check.mjs`, `acceptance-runner.mjs`, `acceptance-spec.mjs` and their tests.** The gate
+  needs the first and the last. `acceptance/2172/check.mjs` (the spec for the convention itself) imports all three
+  and asserts the local behaviour, including the `ci-feedback.json` `acceptance` key that upstream dropped.
+
+Dropped on purpose by the move, none of it enforced:
+
+- The `acceptance` key is no longer written into a `ci-feedback.json` uploaded by the acceptance run. Nothing in this
+  repository or in the hive tooling reads that artifact (`ci-feedback.yml` builds its own document from the API and
+  never downloads a PR's artifacts). The results JSON is still uploaded as `acceptance-results-<run id>`.
+- The manual `workflow_dispatch` run with `target: deployed` against the `ACCEPTANCE_BASE_URL` variable. The shared
+  workflows refuse every event but `pull_request`.
+- The artifact names (`acceptance-results-<PR number>` and friends) now carry the run id.
+
+## Bumping acceptance-spec
+
+`acceptance.yml` calls two workflows of `spiculedata/acceptance-spec`, both pinned to the same **full 40-character
+commit SHA** of that repository's `main` (never a branch or a tag; `acceptance-caller.test.mjs` fails otherwise).
+To bump:
+
+1. Read what changed: `git log <old>..<new> -- scripts .github/workflows` in a checkout of acceptance-spec, and its
+   `README.md` ("Migrating from saiku's copy", inputs, trust model).
+2. Replace the SHA in **both** `uses:` lines of `.github/workflows/acceptance.yml` (one find-and-replace).
+3. Open a PR. A spec-changing PR exercises all four called jobs; check that `acceptance / acceptance specs`,
+   `acceptance / detect changed specs`, `acceptance / specs on base`, `acceptance / spec fails on base` and
+   `acceptance / specs` all exist and pass, since other things key on those names (the hive label watcher reads
+   `acceptance / specs`).
+
+The called jobs' names are part of acceptance-spec's interface. If a bump renames one, either change the caller or
+update every reference listed in the PR.
 
 ## Spec format
 
@@ -120,7 +169,7 @@ announced.
   "request": {
     "method": "GET",
     "path": "/ai/cubes",             // under basePath; "/rest/..." is used as-is; or an absolute URL on the same origin
-    "headers": { "x-example": "{{env.SAIKU_ACCEPTANCE_USER}}" },
+    "headers": { "x-example": "{{env.ACCEPTANCE_USER}}" },
     "json": { "any": "request body" }
   },
   "repeat": { "count": 90, "untilStatus": 429 },   // optional
@@ -134,11 +183,11 @@ announced.
 ### Authentication
 
 Saiku's REST surface under `/rest/saiku/*` is session based. The credentials come only from the environment
-(`SAIKU_ACCEPTANCE_USER`, `SAIKU_ACCEPTANCE_PASSWORD`); a spec says only *how* to use them. In CI they default to
+(`ACCEPTANCE_USER`, `ACCEPTANCE_PASSWORD` in CI, where the shared runner executes the specs; the local runner script still reads `SAIKU_ACCEPTANCE_USER` / `SAIKU_ACCEPTANCE_PASSWORD`, so never put either name in a spec as `{{env.NAME}}` unless it is the CI one); a spec says only *how* to use them. In CI they are
 the public demo login (`admin` / `admin`, the same pair the demo deploy smoke test uses), because the target
 on a PR is the PR's own launcher on loopback inside the runner (`SAIKU_DEMO=true`) and there is nothing to keep secret. To aim
-acceptance at a private instance, set the two as repository **secrets** (they override the default and are withheld
-from fork PRs); never as variables, which are not masked in logs.
+acceptance at a private instance, replace the two literals under `secrets:` in `acceptance.yml` with repository
+**secrets** (withheld from fork PRs); never variables, which are not masked in logs.
 
 | `auth` | What the runner does |
 |---|---|
@@ -158,7 +207,7 @@ sent to the base URL's origin.
 ```
 
 Run as argv (**never** a shell string; a metacharacter is a validation error) in the spec's own directory, with
-`SAIKU_BASE_URL` and `ACCEPTANCE_BASE_URL` set when a base URL is configured. The exit code is the verdict. A
+`ACCEPTANCE_BASE_URL` set when a base URL is configured (the shared runner in CI does not set `SAIKU_BASE_URL`; the local runner sets both). The exit code is the verdict. A
 command spec needs no base URL at all, which is how `acceptance/2172` checks CI tooling.
 
 ### `expect`
@@ -189,9 +238,9 @@ in which every spec is `not-run` has the verdict `not-run`.
 | What | Where | Effect when unset |
 |---|---|---|
 | `ACCEPTANCE_ENFORCE_FROM_ISSUE` | repository **variable** | Nothing is enforced (every closing PR is reported `grandfathered`). See *Rollout cutoff*. |
-| `ACCEPTANCE_BASE_URL` | repository **variable** | Only read by a manual `workflow_dispatch` run with `target: deployed`. Pull requests ignore it and always run against their own build. |
-| `SAIKU_ACCEPTANCE_USER` | repository **secret** | Specs with `auth: session` or `basic` are `not-run`. |
-| `SAIKU_ACCEPTANCE_PASSWORD` | repository **secret** | Same. A secret, never a variable: variables are unmasked in logs. |
+| `ACCEPTANCE_BASE_URL` | repository **variable** | Unused now (it was read only by the removed manual `target: deployed` run). Pull requests always run against their own build. |
+| `ACCEPTANCE_USER`, `ACCEPTANCE_PASSWORD` | `secrets:` of the two calls in `acceptance.yml` | The shared workflows' names for the login. `acceptance.yml` passes the public demo pair `admin` / `admin` as literals (the launcher is the PR's own, on loopback, `SAIKU_DEMO=true`), so GitHub masks the word "admin" in these logs. In specs and `{{env.NAME}}` placeholders the names are `ACCEPTANCE_USER` / `ACCEPTANCE_PASSWORD`, not `SAIKU_ACCEPTANCE_*`. To aim acceptance at a private instance, pass repository **secrets** there; never variables, which are not masked in logs. |
+| `GH_PACKAGES_TOKEN` | repository **secret** | Passed as `BUILD_TOKEN` to build the launcher. Empty on fork PRs: no build, api specs `not-run`. |
 | `acceptance-waived` | repository **label** | The waiver cannot be applied until the label exists. |
 | `spec-already-green` | repository **label** | The escape hatch for `acceptance / spec fails on base` cannot be applied until the label exists; without it a base-green spec just fails. |
 
@@ -201,12 +250,14 @@ under test, so a same-repository PR author can reach whatever that account can.
 ## Trust model of `acceptance.yml`
 
 The specs are authored in the PR under test and the runner executes them, so the workflow is deliberately small:
-`pull_request` (never `pull_request_target`), `contents: read`, and no secret other than the acceptance account.
+`pull_request` (never `pull_request_target`), `contents: read`, and no secret other than the Maven token and the
+public demo login. The shared workflows fetch their scripts from acceptance-spec at exactly the pinned SHA
+(`job.workflow_sha`), verify the checkout, and move them out of the workspace before the PR's build runs.
 GitHub passes secrets to same-repository PRs only, so a fork PR runs with none and its login-dependent specs
 record `not-run`. The spec commands run with an allow-listed environment (`PATH`, `HOME`, the target URL and the
-`SAIKU_ACCEPTANCE_*` / `ACCEPTANCE_*` variables), not the runner's; `GITHUB_TOKEN` is not among them. Api specs
+`ACCEPTANCE_*` variables), not the runner's; `GITHUB_TOKEN` is not among them. Api specs
 may only address the base URL's origin (a PR-authored absolute URL to another host would carry interpolated
-credentials with it). Guard tests fail if `acceptance.yml` gains `pull_request_target` or `workflow_run`, reads
+credentials with it). Guard tests (`acceptance-caller.test.mjs`, `acceptance-runner.test.mjs`) fail if `acceptance.yml` gains `pull_request_target` or `workflow_run`, reads
 the acceptance credentials from `vars.`, takes a write scope or touches `GITHUB_TOKEN`. Do not widen either
 without a security review.
 
@@ -230,7 +281,8 @@ waiver and the shipped spec pass, the runner logs in with a session against a st
 
 ## ci-feedback.json
 
-`ci-feedback.json` gains an optional `acceptance` key:
+The local runner (`acceptance-runner.mjs run --feedback`, `attach`) can still add an optional `acceptance` key to a
+`ci-feedback.json`; the CI run no longer does (see [What is still local](#what-is-still-local)). The key looks like:
 
 ```jsonc
 "acceptance": {
@@ -250,18 +302,20 @@ change ([`docs/ci-feedback.md`](ci-feedback.md)), and `.github/ci-feedback.schem
 # the convention, exactly as CI decides it
 PR_BODY="Closes #2172" PR_LABELS="" ACCEPTANCE_ENFORCE_FROM_ISSUE=1 node .github/scripts/acceptance-check.mjs
 
-# the specs against anything with a base URL
+# the specs against anything with a base URL (the local runner; CI uses acceptance-spec's copy)
 SAIKU_ACCEPTANCE_USER=admin SAIKU_ACCEPTANCE_PASSWORD=admin \
   node .github/scripts/acceptance-runner.mjs run --all --base-url http://localhost:8080 \
   --out /tmp/acceptance-results.json --feedback /tmp/ci-feedback.json
 
-# the red-on-base proof, from two results files and a name-status diff
-git diff --name-status origin/development...HEAD -- 'acceptance/*/spec.json' > /tmp/changed-specs.txt
-node .github/scripts/acceptance-base-check.mjs --changed /tmp/changed-specs.txt \
-  --head head-results.json --base base-results.json --labels ""
+# the same with the shared runner CI uses (a checkout of spiculedata/acceptance-spec at the pinned SHA)
+ACCEPTANCE_USER=admin ACCEPTANCE_PASSWORD=admin ACCEPTANCE_SESSION_PATH=/rest/saiku/session \
+  ACCEPTANCE_BASE_PATH=/rest/saiku/api \
+  node <acceptance-spec>/scripts/acceptance-runner.mjs run --all --base-url http://localhost:8080
+
+# the red-on-base proof: acceptance-spec's scripts/acceptance-base-check.mjs (see its README)
 
 # the tooling's own tests (also `ci / flake-policy tests`)
-node --test ".github/scripts/acceptance-check.test.mjs" ".github/scripts/acceptance-runner.test.mjs" ".github/scripts/acceptance-base-check.test.mjs"
+node --test ".github/scripts/acceptance-check.test.mjs" ".github/scripts/acceptance-runner.test.mjs" ".github/scripts/acceptance-caller.test.mjs"
 ```
 
 ## Provenance
@@ -281,3 +335,5 @@ the allow-listed spec environment, the same-origin restriction for api specs, an
 - The waiver's "tests" now include `saiku-ui/e2e/`.
 - The convention job runs for pull requests only (a push has no PR body) and is inside `ci.yml`'s rollup.
 - No preview/validation coupling.
+- The running of specs and the red-on-base proof were later extracted into `spiculedata/acceptance-spec` and
+  are called from `acceptance.yml` at a pinned SHA (see [Bumping acceptance-spec](#bumping-acceptance-spec)).
