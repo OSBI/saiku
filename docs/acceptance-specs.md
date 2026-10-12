@@ -64,7 +64,7 @@ How it runs, and what it costs:
 |---|---|
 | Trigger | Only when the PR's merge checkout differs from its base in some `acceptance/*/spec.json` (a deleted spec is not checked). A PR touching no spec pays nothing: `detect` is a few seconds and the rest is skipped. |
 | Jobs | `acceptance / detect changed specs` (seconds), then `acceptance / specs on head` and `acceptance / specs on base` in **parallel**, then `acceptance / spec fails on base`. The workflow is self-contained: it builds and runs both sides itself, so the PR's launcher is built twice per spec-changing PR (once by `acceptance / acceptance specs`, once by `specs on head`). Upstream has an opt-in `share-build` that avoids that at the price of running the base side after the head side; it is not turned on here. |
-| Base build | `acceptance / specs on base` builds the base launcher (same Maven command as the head job) and runs only the changed specs against it. The launcher jar (`acceptance-launcher.jar`) is meant to be cached (`actions/cache`) on the base SHA and a fingerprint of the build settings, so a re-push to the same PR, which has the same base, skips the ~5 min build (not working at the current pin; see [What is still local](#what-is-still-local)). A cache created by one PR is not visible to another PR, so the first run per PR and per base SHA pays the build. |
+| Base build | `acceptance / specs on base` builds the base launcher (same Maven command as the head job) and runs only the changed specs against it. The launcher jar (`acceptance-launcher.jar`) is meant to be cached (`actions/cache`) on the base SHA and a fingerprint of the build settings, so a re-push to the same PR, which has the same base, skips the ~5 min build (working since pin `380780e`; see [What is still local](#what-is-still-local)). A cache created by one PR is not visible to another PR, so the first run per PR and per base SHA pays the build. |
 | Specs and base tree | The runner comes from acceptance-spec at the pinned SHA; the spec files come from the PR. The code under test, and the working directory of `command` specs, come from the base checkout, with the PR's spec directories copied over it. |
 | Verdict | `acceptance / spec fails on base` waits for both runs. Per spec: **red on base and green on head** passes; **passes on base** fails; **fails on head** fails; a base run that errored or recorded nothing fails (the proof is unmade, not assumed). |
 | Forks | The Maven token is withheld from fork PRs, so the base launcher cannot be built. Api specs are `not-run` on both sides and the check reports `not-run` (a warning, green by design like `acceptance / specs`), **never** `pass`. Upstream skips the build whenever the token is absent, even if a cached base jar exists. `command` specs need no server and still run on both sides. A maintainer should re-prove a fork's specs on a same-repository branch. |
@@ -111,37 +111,28 @@ Moving to the shared workflows was a refactor: nothing that is enforced today ma
 therefore stay in this repository for now.
 
 - **The convention gate, `ci / acceptance convention`** (a job in `ci.yml`, inside the required `ci` rollup, run by
-  `.github/scripts/acceptance-check.mjs`). acceptance-spec's `convention.yml` waives a PR whose files sit under
-  *any* `e2e/` directory (and a top-level `test/`), where Saiku waives only `saiku-ui/e2e/` and `tests/`. The
-  waiver list is not an input upstream, so adopting it as is would let a PR that adds product code under, say,
-  `saiku-core/e2e/` take the `acceptance-waived` label. Upstream PR [spiculedata/acceptance-spec#3](https://github.com/spiculedata/acceptance-spec/pull/3) adds a
-  `waivable-paths` input; once it is merged and this repository re-pins, the gate can move to `convention.yml`
-  with Saiku's exact list.
+  `.github/scripts/acceptance-check.mjs`). acceptance-spec's `convention.yml` can now take Saiku's exact waiver list
+  (`waivable-paths`, pinned `380780e`) and the cutoff, and a called job renders as `ci / acceptance convention`
+  when the calling job is named `ci`. What blocks the move is `ci.yml` also running on `push` and `merge_group`,
+  where the gate must not run: the only way to skip a call is `if:` on the calling job, and a skipped calling job
+  reports a bare check named `ci` (measured on GitHub), the same name as the single required aggregate check, which
+  could shadow it in the merge queue. Fix, open: [spiculedata/acceptance-spec#5](https://github.com/spiculedata/acceptance-spec/pull/5)
+  (`skip-outside-pull-request`: the called job skips itself, no bare check; measured on a push). The move is ready
+  on the branch `ci/convention-shared`: after #5 merges, replace the pin in `ci.yml` and `acceptance.yml` with the
+  merge commit and merge that branch.
 - **The scripts `acceptance-check.mjs`, `acceptance-runner.mjs`, `acceptance-spec.mjs` and their tests.** The gate
   needs the first and the last. `acceptance/2172/check.mjs` (the spec for the convention itself) imports all three
   and asserts the local behaviour, including the `ci-feedback.json` `acceptance` key that upstream dropped.
 
-Known defect at the pinned SHA: **the base launcher cache does not work yet.** At `65c4575` upstream's
-`base-cache-paths` builds the path `base/./acceptance-launcher.jar`, which `actions/cache` rejects (a warning,
-nothing saved), so a re-push to a spec-changing PR rebuilds the base launcher (~9 min, in parallel with the head
-build, so the wall clock is about the same). `base-cache-paths` is already set here; the cache starts working
-when this repository re-pins to a commit that includes
-[spiculedata/acceptance-spec#4](https://github.com/spiculedata/acceptance-spec/pull/4). Verified there: with that
-fix a second push logged `Cache hit for: acceptance-base-v1-...` and skipped the base build.
-
-Dropped on purpose by the move, none of it enforced:
-
-- The `acceptance` key is no longer written into a `ci-feedback.json` uploaded by the acceptance run. Nothing in this
-  repository or in the hive tooling reads that artifact (`ci-feedback.yml` builds its own document from the API and
-  never downloads a PR's artifacts). The results JSON is still uploaded as `acceptance-results-<run id>`.
-- The manual `workflow_dispatch` run with `target: deployed` against the `ACCEPTANCE_BASE_URL` variable. The shared
-  workflows refuse every event but `pull_request`.
-- The artifact names (`acceptance-results-<PR number>` and friends) now carry the run id.
+The base launcher cache works since the pin `380780e` (spiculedata/acceptance-spec#4: the cache path was
+`base/./acceptance-launcher.jar`, which `actions/cache` rejects, so nothing was saved). On the second push to a
+spec-changing PR `acceptance / specs on base` logs a cache hit and skips the base Maven build.
 
 ## Bumping acceptance-spec
 
 `acceptance.yml` calls two workflows of `spiculedata/acceptance-spec`, both pinned to the same **full 40-character
 commit SHA** of that repository's `main` (never a branch or a tag; `acceptance-caller.test.mjs` fails otherwise).
+Current pin: `380780e255019826deb3901987f4004a454a7659`.
 To bump:
 
 1. Read what changed: `git log <old>..<new> -- scripts .github/workflows` in a checkout of acceptance-spec, and its
