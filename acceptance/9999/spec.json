@@ -1,9 +1,7 @@
 {
   "issue": 9999,
-  "title": "TEMPORARY throwaway to exercise acceptance / spec fails on base (will be removed)",
-  "kind": "api",
-  "criteria": [{ "id": "C1", "given": "an anonymous caller", "then": "GET /rest/saiku/info returns 200" }],
-  "steps": [
-    { "name": "info is anonymous", "criterion": "C1", "request": { "method": "GET", "path": "/rest/saiku/info" }, "expect": { "status": 200 } }
-  ]
+  "title": "TEMPORARY throwaway: the spec-first script exists (red on base, green on head); will be removed",
+  "kind": "ui",
+  "criteria": [{ "id": "C1", "given": "the checkout", "then": "acceptance-base-check.mjs --list runs" }],
+  "command": ["node", "../../.github/scripts/acceptance-base-check.mjs", "--changed", "/dev/null", "--list"]
 }
