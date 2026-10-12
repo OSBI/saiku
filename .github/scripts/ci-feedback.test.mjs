@@ -521,6 +521,7 @@ const DELIBERATELY_UNOBSERVED = new Set([
   'Claude Code',
   'Claude Code Review',
   'release',
+  'thin-caller-gate',
   'ci feedback'
 ]);
 /** PR-gating workflows that live on open PR branches and are listed ahead of their merge. */
