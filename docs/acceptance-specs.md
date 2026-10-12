@@ -53,7 +53,7 @@ announced.
 | `.github/scripts/acceptance-check.mjs` | CLI for the convention gate |
 | `.github/scripts/acceptance-runner.mjs` | CLI to execute specs and update ci-feedback.json |
 | `.github/scripts/acceptance-{check,runner}.test.mjs` | Offline unit tests (loopback HTTP server, temp dirs) |
-| `.github/workflows/acceptance.yml` | Runs the specs on a PR against `ACCEPTANCE_BASE_URL` |
+| `.github/workflows/acceptance.yml` | Builds the PR's launcher, starts it in the runner (FoodMart demo) and runs the specs against it |
 
 ## Spec format
 
@@ -95,7 +95,7 @@ announced.
 Saiku's REST surface under `/rest/saiku/*` is session based. The credentials come only from the environment
 (`SAIKU_ACCEPTANCE_USER`, `SAIKU_ACCEPTANCE_PASSWORD`); a spec says only *how* to use them. In CI they default to
 the public demo login (`admin` / `admin`, the same pair the demo deploy smoke test uses), because the target
-(`ACCEPTANCE_BASE_URL`, `https://demo.saiku.bi`) is a public instance and there is nothing to keep secret. To aim
+on a PR is the PR's own launcher on loopback inside the runner (`SAIKU_DEMO=true`) and there is nothing to keep secret. To aim
 acceptance at a private instance, set the two as repository **secrets** (they override the default and are withheld
 from fork PRs); never as variables, which are not masked in logs.
 
@@ -148,7 +148,7 @@ in which every spec is `not-run` has the verdict `not-run`.
 | What | Where | Effect when unset |
 |---|---|---|
 | `ACCEPTANCE_ENFORCE_FROM_ISSUE` | repository **variable** | Nothing is enforced (every closing PR is reported `grandfathered`). See *Rollout cutoff*. |
-| `ACCEPTANCE_BASE_URL` | repository **variable** | Specs recorded `not-run`; the run is green and says so. The **gate** does not depend on it. |
+| `ACCEPTANCE_BASE_URL` | repository **variable** | Only read by a manual `workflow_dispatch` run with `target: deployed`. Pull requests ignore it and always run against their own build. |
 | `SAIKU_ACCEPTANCE_USER` | repository **secret** | Specs with `auth: session` or `basic` are `not-run`. |
 | `SAIKU_ACCEPTANCE_PASSWORD` | repository **secret** | Same. A secret, never a variable: variables are unmasked in logs. |
 | `acceptance-waived` | repository **label** | The waiver cannot be applied until the label exists. |

@@ -17,6 +17,19 @@ body:
     validations:
       required: true
   - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: >-
+        How we will know this is done, one checkbox per observable outcome. A maintainer needs this
+        before the issue can be labelled issue-approved (the only label that lets an agent pick it
+        up); the issue-gate workflow removes the label if it is missing. Optional for reporters: a
+        maintainer can fill it in.
+      placeholder: |
+        - [ ] The new behaviour is visible in ...
+        - [ ] Existing behaviour ... is unchanged
+        - [ ] Tests and docs cover it
+  - type: textarea
     id: acceptance_tests
     attributes:
       label: Acceptance tests

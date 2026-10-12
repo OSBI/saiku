@@ -1,4 +1,4 @@
-import { expect, test, type Page, type Route } from '@playwright/test';
+import { expect, test, type Page, type Route } from './fixtures/coverage';
 
 /**
  * End-to-end smoke test for the App Builder (Phase 1, Task 9) with a mocked

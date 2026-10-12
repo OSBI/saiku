@@ -46,11 +46,12 @@ export default defineConfig({
 	webServer: runLive
 		? undefined
 		: {
-				command: process.env.CI
-					? 'npm run preview -- --port 4173 --host 127.0.0.1'
-					: 'npm run build && npm run preview -- --port 4173 --host 127.0.0.1',
+				command:
+					process.env.CI || process.env.SAIKU_COVERAGE
+						? 'npm run preview -- --port 4173 --host 127.0.0.1'
+						: 'npm run build && npm run preview -- --port 4173 --host 127.0.0.1',
 				url: 'http://localhost:4173',
-				reuseExistingServer: !process.env.CI,
+				reuseExistingServer: !process.env.CI && !process.env.SAIKU_COVERAGE,
 				timeout: 180_000
 			}
 });

@@ -66,7 +66,7 @@ commands.
   (read-only, job summary).
 - **Acceptance specs** ([acceptance-specs.md](acceptance-specs.md),
   [acceptance/README.md](../acceptance/README.md)). The gate is `ci / acceptance convention`
-  inside `ci.yml`. `acceptance.yml` executes the specs against `ACCEPTANCE_BASE_URL` and is not
+  inside `ci.yml`. `acceptance.yml` builds the PR's launcher, starts it in the runner and executes the specs against it, and is not
   required: with no base URL the specs are recorded `not-run`, never `pass`.
 
 ## Images and previews
@@ -111,6 +111,8 @@ Every file under `.github/workflows/`.
 | `claude-code-review.yml` | PR opened / synchronised / ready / reopened | automated review comments | none |
 | `claude.yml` | issue and PR comments, reviews, issues opened / assigned | Claude Code on request | none |
 | `auto-review.yml` | `apply-review` label added | applies review comments as one commit on the PR branch | none |
+| `issue-gate.yml` | `issue-approved` label added to an issue | removes the label and comments if the issue has no acceptance criteria | [AGENTS.md](../AGENTS.md#queues-and-labels) |
+| `dependabot-automerge.yml` | `ci` completed on a Dependabot PR | merges single-package patch (maven, npm) and Actions non-major/digest bumps | [Dependabot](#dependabot) |
 
 `ci-feedback.yml` also lists `model-diff` and `security-scan`; neither workflow exists on
 `development` yet (see [ci-feedback.md](ci-feedback.md)).
@@ -193,7 +195,7 @@ Names only; never put a value in the repo or in a PR.
 | Name | Used by | Purpose | When unset |
 | --- | --- | --- | --- |
 | `ACCEPTANCE_ENFORCE_FROM_ISSUE` | `ci` (`acceptance-convention`) | cutoff issue number: only issues at or above it owe `acceptance/N/spec.json`. Set to `2181` | nothing is enforced; closing PRs are reported `grandfathered` |
-| `ACCEPTANCE_BASE_URL` | `acceptance` | where specs run. Set to `https://demo.saiku.bi` | specs recorded `not-run`; run is green |
+| `ACCEPTANCE_BASE_URL` | `acceptance` | used only by a manual acceptance run with `target: deployed`; PRs run against their own build | no effect on PRs |
 | `GHCR_RETENTION_APPLY` | `ghcr-tag-retention` | `true` makes the scheduled sweep delete; manual dispatch uses its `apply` input | scheduled runs are dry runs |
 | `PREVIEW_SSH_TARGET` | `preview-env`, `preview-command`, `preview-reaper` | `user@host` of the preview box | all three preview workflows skip cleanly |
 | `PREVIEW_SSH_KNOWN_HOSTS` | same | pinned host key line(s) | the host-access step has no pinned key and fails when a target is set |
@@ -216,6 +218,10 @@ from `acceptance.yml`, and the public demo is the only reachable instance.
 | `apply-review` | maintainer-applied; `auto-review.yml` applies review comments, then removes the label |
 | `risk/high`, `risk/medium`, `risk/low` | advisory, set by `tier-classifier.yml` |
 | `area/*` | advisory, set by `labeler.yml` |
+| `issue-approved` | maintainer-applied; the only label that admits an issue to agents; `issue-gate.yml` removes it when acceptance criteria are missing |
+| `human-queue` | reserved for humans; never admitted to agents, even with `issue-approved` |
+| `do-not-merge`, `blocked`, `hold`, `needs-human` | agents skip these and never remove them |
+| `automerge` | set by `dependabot-automerge.yml` just before it merges |
 | `nightly-compliance` | on the single tracking issue `nightly-compliance.yml` opens on a red night |
 | `dependencies` plus `maven`, `npm`, `github-actions`, `docker` | set by Dependabot (`.github/dependabot.yml`) |
 
@@ -228,6 +234,16 @@ from `acceptance.yml`, and the public demo is the only reachable instance.
 `saiku-ui` npm, weekly. npm updates are grouped (`build-toolchain`, `storybook`, `dev-tooling`,
 `production-minor-patch`), each bounded to minor and patch, so a major arrives as its own PR.
 Dependabot PRs build the image but never push it ([ci-images.md](ci-images.md)).
+
+**Auto-merge.** `dependabot-automerge.yml` runs when `ci` completes successfully on a Dependabot
+PR and merges it with plain `gh pr merge` (which enqueues it in the merge queue, so `ci` re-runs on
+the merge result) only if the PR is open, not a draft, still at the commit `ci` tested, a
+single-package semver-patch bump (Maven, npm) or a GitHub Actions non-major/digest bump, and it
+changes nothing but dependency manifests/lockfiles or workflow `uses:` lines. Groups, majors,
+minors and Docker bumps always wait for a human. The rules are in
+`.github/scripts/dependabot-automerge.mjs` (tested in `dependabot-automerge.test.mjs`); the
+workflow never checks out PR code. It merges the PR with the `automerge` label applied. To
+disable it, delete the workflow file; no repository setting is involved.
 
 Known gotchas:
 
@@ -253,6 +269,6 @@ Known gotchas:
 | PR sits in the merge queue | the `ci` run on the `gh-readonly-queue/...` ref (Actions, workflow `ci`); a failure there removes the PR from the queue |
 | Demo not updating | `promote-green` run for the commit (did `ci` or `docker` fail?), then the VM timer ([demo-deployment.md](demo-deployment.md)); manual dispatch of `promote-green` is also the rollback |
 | No preview appeared | `PREVIEW_SSH_TARGET` empty (skipped), PR not eligible, or at `PREVIEW_MAX_ENVS` and queued ([ci-preview-environments.md](decisions/ci-preview-environments.md)) |
-| Acceptance specs show `not-run` | `ACCEPTANCE_BASE_URL` or the acceptance credentials are unset; this is green by design |
+| Acceptance specs show `not-run` | a fork PR (no `GH_PACKAGES_TOKEN`, so the launcher cannot be built); this is green by design |
 | Nightly red | the `nightly-compliance` tracking issue; the OWASP lane without `NVD_API_KEY` can fail on rate limits |
 | Release job red | `release-prep` on the release branch first; see [releasing.md](releasing.md) |

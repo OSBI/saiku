@@ -182,7 +182,7 @@ jobs:
 
       - name: Upload flake record
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: flake-records-maven
           path: flake-records/
@@ -364,7 +364,7 @@ jobs:
 
       - name: Upload flake records
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: flake-records-ui
           path: flake-records/
@@ -373,7 +373,7 @@ jobs:
 
       - name: Upload Playwright traces
         if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-test-results
           path: saiku-ui/test-results/
@@ -472,7 +472,7 @@ jobs:
           zip -r "$STAGE.zip" "$STAGE"
           ls -la "$STAGE.zip"
       - name: Upload distribution artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: saiku-dist-${{ steps.ver.outputs.version }}
           path: saiku-dist-${{ steps.ver.outputs.version }}.zip
