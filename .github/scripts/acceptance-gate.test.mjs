@@ -42,7 +42,7 @@ function gate({ event = 'pull_request', changed = {}, run = ['skipped', ''], fir
     SPEC_FIRST_RESULT: first[0],
     SPEC_FIRST_VERDICT: first[1]
   };
-  const r = spawnSync('bash', ['-c', SCRIPT], { env, encoding: 'utf8' });
+  const r = spawnSync('bash', ['--noprofile', '--norc', '-e', '-o', 'pipefail', '-c', SCRIPT], { env, encoding: 'utf8' });
   return { ok: r.status === 0, out: r.stdout };
 }
 
