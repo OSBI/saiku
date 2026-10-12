@@ -111,6 +111,8 @@ Every file under `.github/workflows/`.
 | `claude-code-review.yml` | PR opened / synchronised / ready / reopened | automated review comments | none |
 | `claude.yml` | issue and PR comments, reviews, issues opened / assigned | Claude Code on request | none |
 | `auto-review.yml` | `apply-review` label added | applies review comments as one commit on the PR branch | none |
+| `issue-gate.yml` | `issue-approved` label added to an issue | removes the label and comments if the issue has no acceptance criteria | [AGENTS.md](../AGENTS.md#queues-and-labels) |
+| `dependabot-automerge.yml` | `ci` completed on a Dependabot PR | merges single-package patch (maven, npm) and Actions non-major/digest bumps | [Dependabot](#dependabot) |
 
 `ci-feedback.yml` also lists `model-diff` and `security-scan`; neither workflow exists on
 `development` yet (see [ci-feedback.md](ci-feedback.md)).
@@ -216,6 +218,10 @@ from `acceptance.yml`, and the public demo is the only reachable instance.
 | `apply-review` | maintainer-applied; `auto-review.yml` applies review comments, then removes the label |
 | `risk/high`, `risk/medium`, `risk/low` | advisory, set by `tier-classifier.yml` |
 | `area/*` | advisory, set by `labeler.yml` |
+| `issue-approved` | maintainer-applied; the only label that admits an issue to agents; `issue-gate.yml` removes it when acceptance criteria are missing |
+| `human-queue` | reserved for humans; never admitted to agents, even with `issue-approved` |
+| `do-not-merge`, `blocked`, `hold`, `needs-human` | agents skip these and never remove them |
+| `automerge` | set by `dependabot-automerge.yml` just before it merges |
 | `nightly-compliance` | on the single tracking issue `nightly-compliance.yml` opens on a red night |
 | `dependencies` plus `maven`, `npm`, `github-actions`, `docker` | set by Dependabot (`.github/dependabot.yml`) |
 
@@ -228,6 +234,16 @@ from `acceptance.yml`, and the public demo is the only reachable instance.
 `saiku-ui` npm, weekly. npm updates are grouped (`build-toolchain`, `storybook`, `dev-tooling`,
 `production-minor-patch`), each bounded to minor and patch, so a major arrives as its own PR.
 Dependabot PRs build the image but never push it ([ci-images.md](ci-images.md)).
+
+**Auto-merge.** `dependabot-automerge.yml` runs when `ci` completes successfully on a Dependabot
+PR and merges it with plain `gh pr merge` (which enqueues it in the merge queue, so `ci` re-runs on
+the merge result) only if the PR is open, not a draft, still at the commit `ci` tested, a
+single-package semver-patch bump (Maven, npm) or a GitHub Actions non-major/digest bump, and it
+changes nothing but dependency manifests/lockfiles or workflow `uses:` lines. Groups, majors,
+minors and Docker bumps always wait for a human. The rules are in
+`.github/scripts/dependabot-automerge.mjs` (tested in `dependabot-automerge.test.mjs`); the
+workflow never checks out PR code. It merges the PR with the `automerge` label applied. To
+disable it, delete the workflow file; no repository setting is involved.
 
 Known gotchas:
 

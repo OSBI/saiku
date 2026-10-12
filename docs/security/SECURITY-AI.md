@@ -25,7 +25,7 @@ Per `permissions.allow` in `.claude/settings.json`: read-only inspection (`ls`, 
 
 - Force-pushing (`git push --force`, `-f`) and any push to `main` or `development` (origin or upstream). All work goes on a `feature/<name>`, `chore/<name>` or `hotfix/<name>` branch and reaches `development` by PR (see *Branching strategy* in `AGENTS.md`).
 - Bypassing hooks: `git commit --no-verify`, `git push --no-verify`. The pre-commit hook runs Spotless.
-- Publishing: `mvn deploy`, `mvn release`, `gh release`. Releases follow `.claude/skills/cut-release/SKILL.md` and are run by a maintainer.
+- Publishing: `mvn deploy`, `mvn release`, `gh release`. Releases follow `.agents/skills/cut-release/SKILL.md` and are run by a maintainer.
 - Touching secrets: `gh secret`, and reading `./.env`, `./**/.env` or `./secrets/**`.
 
 Beyond the deny list, by convention (not mechanically enforced):
