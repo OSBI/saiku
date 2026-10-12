@@ -1,6 +1,6 @@
 {
   "issue": 999991,
-  "title": "THROWAWAY: anonymous info endpoint answers 200 (passes on base, so it must be rejected)",
+  "title": "THROWAWAY (second push): anonymous info endpoint answers 200 (passes on base, so it must be rejected)",
   "kind": "api",
   "auth": "none",
   "criteria": [{ "id": "C1", "given": "a running launcher", "then": "/rest/saiku/info answers 200" }],
