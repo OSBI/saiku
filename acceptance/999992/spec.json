@@ -1,0 +1,10 @@
+{
+  "issue": 999992,
+  "title": "throwaway proof: a command spec that is red on base and green on head",
+  "kind": "ui",
+  "criteria": [
+    { "id": "C1", "given": "the PR head", "then": "docs/throwaway-proof-marker.md exists" }
+  ],
+  "command": ["node", "check.mjs"],
+  "timeoutSeconds": 60
+}
