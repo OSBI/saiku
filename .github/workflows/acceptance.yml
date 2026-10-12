@@ -96,8 +96,8 @@ jobs:
 
   # Runs ONLY when the PR adds or changes an acceptance/<issue>/spec.json: that spec must FAIL on the base
   # branch's launcher and PASS on the PR's. Self-contained (builds and runs both sides), so it does not wait
-  # for `run-specs`. The base launcher jar is cached on the base SHA, so a re-push to the same PR skips the
-  # Maven build. Check names: `acceptance / detect changed specs`, `acceptance / specs on head`,
+  # for `run-specs`. The base launcher jar is meant to be cached on the base SHA (see base-cache-paths below).
+  # Check names: `acceptance / detect changed specs`, `acceptance / specs on head`,
   # `acceptance / specs on base`, `acceptance / spec fails on base`. A human-applied `spec-already-green`
   # label excuses a spec that legitimately passes on base.
   spec-first:
@@ -115,6 +115,9 @@ jobs:
       ready-timeout: 300
       base-path: /rest/saiku/api
       session-path: /rest/saiku/session
+      # Cache the base launcher jar on the base SHA. Inert at the pinned SHA (actions/cache rejects the path
+      # upstream builds for working-directory "."): fixed by spiculedata/acceptance-spec#4, effective once
+      # this file is re-pinned to a commit that has it.
       base-cache-paths: |
         acceptance-launcher.jar
       # Keep identical to run-specs above (guarded by .github/scripts/acceptance-caller.test.mjs).

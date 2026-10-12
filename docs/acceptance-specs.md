@@ -64,7 +64,7 @@ How it runs, and what it costs:
 |---|---|
 | Trigger | Only when the PR's merge checkout differs from its base in some `acceptance/*/spec.json` (a deleted spec is not checked). A PR touching no spec pays nothing: `detect` is a few seconds and the rest is skipped. |
 | Jobs | `acceptance / detect changed specs` (seconds), then `acceptance / specs on head` and `acceptance / specs on base` in **parallel**, then `acceptance / spec fails on base`. The workflow is self-contained: it builds and runs both sides itself, so the PR's launcher is built twice per spec-changing PR (once by `acceptance / acceptance specs`, once by `specs on head`). Upstream has an opt-in `share-build` that avoids that at the price of running the base side after the head side; it is not turned on here. |
-| Base build | `acceptance / specs on base` builds the base launcher (same Maven command as the head job) and runs only the changed specs against it. The launcher jar (`acceptance-launcher.jar`) is cached (`actions/cache`) on the base SHA and a fingerprint of the build settings, so a re-push to the same PR, which has the same base, skips the ~5 min build. A cache created by one PR is not visible to another PR, so the first run per PR and per base SHA pays the build. |
+| Base build | `acceptance / specs on base` builds the base launcher (same Maven command as the head job) and runs only the changed specs against it. The launcher jar (`acceptance-launcher.jar`) is meant to be cached (`actions/cache`) on the base SHA and a fingerprint of the build settings, so a re-push to the same PR, which has the same base, skips the ~5 min build (not working at the current pin; see [What is still local](#what-is-still-local)). A cache created by one PR is not visible to another PR, so the first run per PR and per base SHA pays the build. |
 | Specs and base tree | The runner comes from acceptance-spec at the pinned SHA; the spec files come from the PR. The code under test, and the working directory of `command` specs, come from the base checkout, with the PR's spec directories copied over it. |
 | Verdict | `acceptance / spec fails on base` waits for both runs. Per spec: **red on base and green on head** passes; **passes on base** fails; **fails on head** fails; a base run that errored or recorded nothing fails (the proof is unmade, not assumed). |
 | Forks | The Maven token is withheld from fork PRs, so the base launcher cannot be built. Api specs are `not-run` on both sides and the check reports `not-run` (a warning, green by design like `acceptance / specs`), **never** `pass`. Upstream skips the build whenever the token is absent, even if a cached base jar exists. `command` specs need no server and still run on both sides. A maintainer should re-prove a fork's specs on a same-repository branch. |
@@ -120,6 +120,14 @@ therefore stay in this repository for now.
 - **The scripts `acceptance-check.mjs`, `acceptance-runner.mjs`, `acceptance-spec.mjs` and their tests.** The gate
   needs the first and the last. `acceptance/2172/check.mjs` (the spec for the convention itself) imports all three
   and asserts the local behaviour, including the `ci-feedback.json` `acceptance` key that upstream dropped.
+
+Known defect at the pinned SHA: **the base launcher cache does not work yet.** At `65c4575` upstream's
+`base-cache-paths` builds the path `base/./acceptance-launcher.jar`, which `actions/cache` rejects (a warning,
+nothing saved), so a re-push to a spec-changing PR rebuilds the base launcher (~9 min, in parallel with the head
+build, so the wall clock is about the same). `base-cache-paths` is already set here; the cache starts working
+when this repository re-pins to a commit that includes
+[spiculedata/acceptance-spec#4](https://github.com/spiculedata/acceptance-spec/pull/4). Verified there: with that
+fix a second push logged `Cache hit for: acceptance-base-v1-...` and skipped the base build.
 
 Dropped on purpose by the move, none of it enforced:
 
