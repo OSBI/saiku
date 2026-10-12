@@ -1,0 +1,14 @@
+{
+  "issue": 99901,
+  "title": "Throwaway: a spec that fails on every build",
+  "kind": "api",
+  "criteria": [{ "id": "C1", "given": "an anonymous caller", "then": "GET /rest/saiku/info answers 418" }],
+  "steps": [
+    {
+      "name": "info answers 418 (it does not)",
+      "criterion": "C1",
+      "request": { "method": "GET", "path": "/rest/saiku/info" },
+      "expect": { "status": 418 }
+    }
+  ]
+}
