@@ -10,8 +10,8 @@ name: acceptance
 # docs/acceptance-specs.md. Do not point `uses:` at a branch or tag.
 #
 # The GATE is `ci / acceptance convention` inside ci.yml: a PR that closes issue N must ship
-# acceptance/N/spec.json. It still runs from this repository's own .github/scripts/acceptance-check.mjs
-# (see docs/acceptance-specs.md, "What is still local": moving it waits for acceptance-spec#5).
+# acceptance/N/spec.json. It is acceptance-spec's convention.yml, called from ci.yml at the same pin with
+# Saiku's waivable-paths (see docs/acceptance-specs.md, "What is still local").
 #
 # CHECK NAMES. A reusable workflow's checks are named `<caller job name> / <called job name>`. Every caller
 # job below has `name: acceptance`, so the called jobs read `acceptance / detect changed specs`,
@@ -48,7 +48,7 @@ jobs:
   # every spec against it. Check name: `acceptance / acceptance specs`.
   run-specs:
     name: acceptance
-    uses: spiculedata/acceptance-spec/.github/workflows/run-specs.yml@380780e255019826deb3901987f4004a454a7659
+    uses: spiculedata/acceptance-spec/.github/workflows/run-specs.yml@aaf45861ba0f0647861cf9e62108a273a6dc1ed4
     with:
       mode: enforce
       node-version: "24"
@@ -102,7 +102,7 @@ jobs:
   # label excuses a spec that legitimately passes on base.
   spec-first:
     name: acceptance
-    uses: spiculedata/acceptance-spec/.github/workflows/base-check.yml@380780e255019826deb3901987f4004a454a7659
+    uses: spiculedata/acceptance-spec/.github/workflows/base-check.yml@aaf45861ba0f0647861cf9e62108a273a6dc1ed4
     with:
       mode: enforce
       node-version: "24"

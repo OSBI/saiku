@@ -52,7 +52,7 @@ test('the shared workflows are called at ONE full commit SHA, never a branch or 
   assert.deepEqual(
     shared.map((u) => u.slice(SHARED.length + 1, u.indexOf('@'))).sort(),
     ['base-check.yml', 'run-specs.yml'],
-    'run-specs and base-check are called; the convention gate stays local (docs/acceptance-specs.md)'
+    'run-specs and base-check are called; the convention gate is called from ci.yml (ci-wiring.test.mjs guards it)'
   );
   const refs = new Set(shared.map((u) => u.slice(u.indexOf('@') + 1)));
   assert.equal(refs.size, 1, 'every call uses the same pin');
