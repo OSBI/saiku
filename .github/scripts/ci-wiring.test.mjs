@@ -64,10 +64,9 @@ test('the acceptance convention gate is the shared convention.yml, pinned, enfor
   assert.match(block, /skip-outside-pull-request: true/);
   const pin = block.match(/uses: spiculedata\/acceptance-spec\/\.github\/workflows\/convention\.yml@([0-9a-f]{40})$/m);
   assert.ok(pin, 'convention.yml is called at a full 40 character SHA');
-  const acceptance = readFileSync(join(root, '.github', 'workflows', 'acceptance.yml'), 'utf8');
-  const others = [...acceptance.matchAll(/acceptance-spec\/\.github\/workflows\/[\w.-]+@([0-9a-f]{40})/g)].map((m) => m[1]);
-  assert.ok(others.length > 0);
-  assert.deepEqual([...new Set(others)], [pin[1]], 'ci.yml and acceptance.yml use the same acceptance-spec pin');
+  const all = [...ci.matchAll(/acceptance-spec\/\.github\/workflows\/([\w.-]+)@([0-9a-f]{40})/g)];
+  assert.deepEqual(all.map((m) => m[1]).sort(), ['base-check.yml', 'convention.yml', 'run-specs.yml'], 'ci.yml calls all three shared workflows');
+  assert.deepEqual([...new Set(all.map((m) => m[2]))], [pin[1]], 'all three shared workflows use the same acceptance-spec pin');
   assert.match(block, /mode: enforce/);
   assert.match(block, /enforce-from-issue: \$\{\{ vars\.ACCEPTANCE_ENFORCE_FROM_ISSUE \}\}/);
   // untrusted PR text is handled upstream (env, never interpolated); nothing of it appears here
@@ -123,7 +122,7 @@ test('the playwright config retries once in CI and writes the report the policy 
 });
 
 test('new workflows never check out or run the code of a pull_request_target event', () => {
-  for (const file of ['ci-feedback.yml', 'acceptance.yml', 'flake-ledger.yml']) {
+  for (const file of ['ci-feedback.yml', 'ci.yml', 'flake-ledger.yml']) {
     const text = codeOnly(readFileSync(join(root, '.github', 'workflows', file), 'utf8'));
     assert.doesNotMatch(text, /pull_request_target/, file);
     assert.doesNotMatch(text, /ref: \$\{\{ github\.event\.(pull_request|workflow_run)\.head/, file);

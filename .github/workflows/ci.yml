@@ -41,6 +41,8 @@ jobs:
       ui: ${{ steps.filter.outputs.ui }}
       docs: ${{ steps.filter.outputs.docs }}
       sheets: ${{ steps.filter.outputs.sheets }}
+      acceptance: ${{ steps.filter.outputs.acceptance }}
+      specs: ${{ steps.filter.outputs.specs }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
@@ -86,6 +88,14 @@ jobs:
             # tests under `node --test`; no npm install needed (no deps).
             sheets:
               - 'integrations/google-sheets/**'
+            # Acceptance specs (docs/acceptance-specs.md). `acceptance` is any change under acceptance/ (a
+            # spec added, edited or deleted, or its helper files): the specs must run again. `specs` is a
+            # spec.json ADDED or MODIFIED, which is exactly what base-check treats as "changed" (a deletion
+            # leaves nothing to prove), so the `ci` rollup can insist the red-on-base proof really ran.
+            acceptance:
+              - 'acceptance/**'
+            specs:
+              - added|modified: 'acceptance/*/spec.json'
 
   build:
     name: build (JDK 22, ubuntu-latest)
@@ -547,6 +557,164 @@ jobs:
         \.(test|spec)\.[cm]?[jt]sx?$
         \.e2e\.[cm]?[jt]s$
 
+  # ACCEPTANCE SPECS ARE PART OF THE GATE. The two shared workflows below used to live in acceptance.yml and
+  # were visible but not required. They are called from here so that the one required check, `ci`, waits for
+  # them (see the `ci` job: it reads their RESULT and their VERDICT output). Check names are unchanged:
+  # a called job reads `<caller job name> / <called job name>`. Pin, trust model and how to bump:
+  # docs/acceptance-specs.md.
+  #
+  # SECURITY. Same as before the move: `pull_request` (never `pull_request_target`), read-only token. The
+  # runner executes the PR's own spec files, which is the point. The launcher listens on loopback only and
+  # its login is the public demo pair admin/admin (passed as workflow inputs of that name only because that is how a reusable
+  # workflow takes them; GitHub masks the word "admin" in these logs). The one real credential is
+  # GH_PACKAGES_TOKEN, handed over as BUILD_TOKEN; it is withheld from fork PRs, which then run only the specs
+  # that need no server (api specs are recorded `not-run`, never `pass`, and `ci` treats `not-run` as red).
+  #
+  # Do NOT give these callers an `if:` that is true on a merge_group: the shared workflows refuse every event
+  # but pull_request. A skipped caller reports a bare check named `acceptance`, which shadows nothing required.
+  #
+  # Builds the launcher fat JAR from the PR head, starts it on loopback with the FoodMart demo and runs
+  # every spec against it. Check name: `acceptance / acceptance specs`.
+  run-specs:
+    name: acceptance
+    needs: changes
+    # pull_request only: the shared workflows refuse every other event (the merge queue re-runs the build and
+    # tests, not the specs; see docs/acceptance-specs.md). Skipped when nothing the specs can observe changed:
+    # product code, the UI bundled into the launcher, workflows (all in the `java`/`ui` filters), or acceptance/.
+    if: >-
+      github.event_name == 'pull_request' && (
+      needs.changes.outputs.java == 'true' ||
+      needs.changes.outputs.ui == 'true' ||
+      needs.changes.outputs.acceptance == 'true')
+    uses: spiculedata/acceptance-spec/.github/workflows/run-specs.yml@aaf45861ba0f0647861cf9e62108a273a6dc1ed4
+    with:
+      mode: enforce
+      node-version: "24"
+      java-version: "22"
+      java-cache: maven
+      # Maven cold build ~5 min + boot ~1 min + specs (seconds).
+      timeout-minutes: 25
+      skip-without-build-token: true
+      base-url: http://127.0.0.1:18080
+      # Anonymous endpoint, answers 200 once the launcher is up. Bounded wait of 5 minutes.
+      ready-url: http://127.0.0.1:18080/rest/saiku/info
+      ready-timeout: 300
+      base-path: /rest/saiku/api
+      session-path: /rest/saiku/session
+      # BUILD_TOKEN (= GH_PACKAGES_TOKEN) and GITHUB_ACTOR reach this command; same settings.xml as ci.yml's
+      # `build` and `dist` jobs. The fat JAR is copied to a fixed name so that starting, caching and
+      # (if ever turned on) sharing it need no glob.
+      build-command: |
+        mkdir -p ~/.m2
+        cat > ~/.m2/settings.xml <<EOF
+        <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+          <servers>
+            <server><id>github-mondrian-saiku</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+            <server><id>github-olap4j</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+            <server><id>github-olap4j-xmlaserver</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+            <server><id>github-saiku-query</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+            <server><id>github-ossie</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+          </servers>
+        </settings>
+        EOF
+        mvn -B -ntp -pl saiku-launcher -am -Dmaven.test.skip=true package
+        JAR=$(ls saiku-launcher/target/saiku-*.jar | grep -E '/saiku-[0-9][^/]*\.jar$' | grep -Ev -- '-(sources|test-sources|tests)\.jar$' | head -n1)
+        echo "Launcher: $JAR"
+        cp "$JAR" acceptance-launcher.jar
+      # SAIKU_DEMO=true seeds FoodMart, the admin/admin login and the relaxed AI policy, exactly like
+      # demo.saiku.bi. The shared start script detaches it (setsid) so it outlives the step, not the job.
+      start-command: |
+        mkdir -p "$RUNNER_TEMP/saiku-home"
+        SAIKU_DEMO=true SAIKU_TELEMETRY=off exec java -XX:+ExitOnOutOfMemoryError -jar acceptance-launcher.jar serve \
+          --host 127.0.0.1 --port 18080 --home "$RUNNER_TEMP/saiku-home"
+    secrets:
+      BUILD_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+      ACCEPTANCE_USER: admin
+      ACCEPTANCE_PASSWORD: admin
+
+  # Runs ONLY when the PR adds or changes an acceptance/<issue>/spec.json: that spec must FAIL on the base
+  # branch's launcher and PASS on the PR's. Self-contained (builds and runs both sides), so it does not wait
+  # for `run-specs`. The base launcher jar is meant to be cached on the base SHA (see base-cache-paths below).
+  # Check names: `acceptance / detect changed specs`, `acceptance / specs on head`,
+  # `acceptance / specs on base`, `acceptance / spec fails on base`. A human-applied `spec-already-green`
+  # label excuses a spec that legitimately passes on base.
+  spec-first:
+    name: acceptance
+    needs: changes
+    # Not path-filtered: its own `detect changed specs` job (seconds) decides whether there is anything to
+    # prove, and the rollup cross-checks that against the `specs` filter above.
+    if: github.event_name == 'pull_request'
+    uses: spiculedata/acceptance-spec/.github/workflows/base-check.yml@aaf45861ba0f0647861cf9e62108a273a6dc1ed4
+    with:
+      mode: enforce
+      node-version: "24"
+      java-version: "22"
+      java-cache: maven
+      timeout-minutes: 25
+      skip-without-build-token: true
+      base-url: http://127.0.0.1:18080
+      ready-url: http://127.0.0.1:18080/rest/saiku/info
+      ready-timeout: 300
+      base-path: /rest/saiku/api
+      session-path: /rest/saiku/session
+      # Cache the base launcher jar on the base SHA. Works since acceptance-spec#4 (380780e): before that the
+      # cache path built for working-directory "." was rejected by actions/cache and nothing was saved.
+      base-cache-paths: |
+        acceptance-launcher.jar
+      # Keep identical to run-specs above (guarded by .github/scripts/acceptance-caller.test.mjs).
+      build-command: |
+        mkdir -p ~/.m2
+        cat > ~/.m2/settings.xml <<EOF
+        <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+          <servers>
+            <server><id>github-mondrian-saiku</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+            <server><id>github-olap4j</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+            <server><id>github-olap4j-xmlaserver</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+            <server><id>github-saiku-query</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+            <server><id>github-ossie</id><username>${GITHUB_ACTOR}</username><password>${BUILD_TOKEN}</password></server>
+          </servers>
+        </settings>
+        EOF
+        mvn -B -ntp -pl saiku-launcher -am -Dmaven.test.skip=true package
+        JAR=$(ls saiku-launcher/target/saiku-*.jar | grep -E '/saiku-[0-9][^/]*\.jar$' | grep -Ev -- '-(sources|test-sources|tests)\.jar$' | head -n1)
+        echo "Launcher: $JAR"
+        cp "$JAR" acceptance-launcher.jar
+      start-command: |
+        mkdir -p "$RUNNER_TEMP/saiku-home"
+        SAIKU_DEMO=true SAIKU_TELEMETRY=off exec java -XX:+ExitOnOutOfMemoryError -jar acceptance-launcher.jar serve \
+          --host 127.0.0.1 --port 18080 --home "$RUNNER_TEMP/saiku-home"
+    secrets:
+      BUILD_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+      ACCEPTANCE_USER: admin
+      ACCEPTANCE_PASSWORD: admin
+
+  # Keeps the check name `acceptance / specs` alive (the hive label watcher reads it). It is red exactly when
+  # `ci` would be red because of `run-specs`: the call failed or was cancelled, or its verdict is `fail` or
+  # `not-run` (a spec that could not run is never a pass). Skipped (merge queue, push, or a PR that changes
+  # nothing the specs observe) is fine.
+  specs:
+    name: acceptance / specs
+    needs: [run-specs]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Same result as the called run-specs workflow
+        env:
+          RUN_SPECS_RESULT: ${{ needs.run-specs.result }}
+          RUN_SPECS_VERDICT: ${{ needs.run-specs.outputs.verdict }}
+        run: |
+          echo "acceptance specs concluded: $RUN_SPECS_RESULT (verdict: ${RUN_SPECS_VERDICT:-none})"
+          case "$RUN_SPECS_RESULT" in
+            skipped) exit 0 ;;
+            success) ;;
+            *) echo "::error::acceptance specs concluded $RUN_SPECS_RESULT (see the 'acceptance / acceptance specs' check)"; exit 1 ;;
+          esac
+          case "$RUN_SPECS_VERDICT" in
+            pass|skipped) ;;
+            *) echo "::error::acceptance specs verdict is '$RUN_SPECS_VERDICT': a spec failed or could not run, which is never a pass"; exit 1 ;;
+          esac
+
   # Single aggregator status check. Branch protection requires only `ci`,
   # which makes the rule stable across:
   #   - matrix jobs whose display names interpolate ${{ matrix.os }}
@@ -556,9 +724,16 @@ jobs:
   # `if: always()` runs the gate regardless of upstream outcomes; the
   # script then fails if any upstream reports anything other than
   # success/skipped — so a real build failure still blocks the merge.
+  #
+  # ACCEPTANCE. A RESULT of success/skipped is not enough for the three acceptance jobs: the shared workflows
+  # exit 0 for a spec that was `not-run` (a fork PR without the build token) and for a spec that passes on the
+  # base build when the PR is excused. So the second step reads their VERDICT outputs and decides explicitly
+  # (rules in docs/acceptance-specs.md, tested by .github/scripts/acceptance-gate.test.mjs, which runs this
+  # very step). `skipped` is only accepted where it is legitimate: on push / merge_group, or on a PR that
+  # changes nothing the specs observe.
   ci:
     name: ci
-    needs: [changes, build, ui, sheets, dist, scripts, flake-policy, acceptance-convention, demo-deploy]
+    needs: [changes, build, ui, sheets, dist, scripts, flake-policy, acceptance-convention, demo-deploy, run-specs, spec-first, specs]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -575,7 +750,10 @@ jobs:
             "scripts=${{ needs.scripts.result }}" \
             "flake-policy=${{ needs.flake-policy.result }}" \
             "acceptance-convention=${{ needs.acceptance-convention.result }}" \
-            "demo-deploy=${{ needs.demo-deploy.result }}"; do
+            "demo-deploy=${{ needs.demo-deploy.result }}" \
+            "run-specs=${{ needs.run-specs.result }}" \
+            "spec-first=${{ needs.spec-first.result }}" \
+            "specs=${{ needs.specs.result }}"; do
             name="${entry%%=*}"
             result="${entry#*=}"
             case "$result" in
@@ -583,4 +761,56 @@ jobs:
               *) echo "::error::$name=$result"; fail=1 ;;
             esac
           done
+          exit "$fail"
+
+      - name: Acceptance gate (verdicts, not just results)
+        if: always()
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          CHANGED_JAVA: ${{ needs.changes.outputs.java }}
+          CHANGED_UI: ${{ needs.changes.outputs.ui }}
+          CHANGED_ACCEPTANCE: ${{ needs.changes.outputs.acceptance }}
+          CHANGED_SPECS: ${{ needs.changes.outputs.specs }}
+          RUN_SPECS_RESULT: ${{ needs.run-specs.result }}
+          RUN_SPECS_VERDICT: ${{ needs.run-specs.outputs.verdict }}
+          SPEC_FIRST_RESULT: ${{ needs.spec-first.result }}
+          SPEC_FIRST_VERDICT: ${{ needs.spec-first.outputs.verdict }}
+        run: |
+          set -uo pipefail
+          fail=0
+          bad() { echo "::error::$*"; fail=1; }
+
+          if [ "$EVENT_NAME" != "pull_request" ]; then
+            # push / merge_group: the shared workflows only run on pull_request, so there is nothing to read.
+            echo "ok: acceptance is a pull_request check (event: $EVENT_NAME); run-specs=$RUN_SPECS_RESULT spec-first=$SPEC_FIRST_RESULT"
+            exit 0
+          fi
+
+          # 1. Does the PR change anything the specs can observe? Then run-specs MUST have run and be green.
+          must_run=false
+          for v in "$CHANGED_JAVA" "$CHANGED_UI" "$CHANGED_ACCEPTANCE" "$CHANGED_SPECS"; do
+            [ "$v" = "true" ] && must_run=true
+          done
+          if [ "$must_run" = "true" ]; then
+            [ "$RUN_SPECS_RESULT" = "success" ] || bad "acceptance specs must run on this PR but concluded '$RUN_SPECS_RESULT'"
+            case "$RUN_SPECS_VERDICT" in
+              pass|skipped) echo "ok: acceptance specs verdict=$RUN_SPECS_VERDICT" ;;
+              *) bad "acceptance specs verdict is '${RUN_SPECS_VERDICT:-none}': a spec failed or could not run (not-run is never a pass)" ;;
+            esac
+          else
+            echo "ok: no product, UI, workflow or acceptance/ change, so acceptance specs are not re-run (result=$RUN_SPECS_RESULT)"
+          fi
+
+          # 2. Spec-first proof. Always called on a PR; its own detect step decides if there is anything to prove.
+          [ "$SPEC_FIRST_RESULT" = "success" ] || bad "acceptance spec-first proof concluded '$SPEC_FIRST_RESULT'"
+          case "$SPEC_FIRST_VERDICT" in
+            pass|red-on-base-green-on-head) echo "ok: spec-first verdict=$SPEC_FIRST_VERDICT" ;;
+            skipped)
+              if [ "$CHANGED_SPECS" = "true" ]; then
+                bad "this PR adds or changes an acceptance/<issue>/spec.json but the red-on-base proof reports 'skipped'; it did not run"
+              else
+                echo "ok: no spec changed, nothing to prove on base"
+              fi ;;
+            *) bad "acceptance spec-first verdict is '${SPEC_FIRST_VERDICT:-none}' (passes-on-base, fail and not-run are all red; only a human-applied spec-already-green label excuses a base-green spec)" ;;
+          esac
           exit "$fail"

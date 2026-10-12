@@ -15,7 +15,7 @@ need the first **real** error, not log scraping. For every commit CI now publish
 ## How it works
 
 `.github/workflows/ci-feedback.yml` reacts (`workflow_run`, `completed`) to every PR-gating workflow: `ci`,
-`docker`, `design-system`, `release-prep`, `acceptance`, and the two that are still on open PR branches
+`docker`, `design-system`, `release-prep`, and the two that are still on open PR branches
 (`security-scan`, `model-diff`). Each time one finishes it re-reads **all** the runs for that commit, so the
 document is the same whichever workflow finished last and a newer run simply supersedes an older one.
 

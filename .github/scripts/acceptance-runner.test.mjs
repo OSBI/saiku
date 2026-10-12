@@ -709,10 +709,10 @@ test('an api spec does not receive GITHUB_TOKEN via env (defense in depth)', asy
 
 // ------------------------------------------------------- workflow trust guards
 
-test('acceptance.yml stays on pull_request and runs against its own loopback build with the public demo login, never secrets or variables', async () => {
-  const text = readFileSync(join(repoRoot, '.github', 'workflows', 'acceptance.yml'), 'utf8');
+test('the acceptance jobs in ci.yml stay on pull_request and run against its own loopback build with the public demo login, never secrets or variables', async () => {
+  const text = readFileSync(join(repoRoot, '.github', 'workflows', 'ci.yml'), 'utf8');
   const code = text.split('\n').filter((l) => !l.trim().startsWith('#')).join('\n');
-  assert.match(code, /^on:\n {2}pull_request:/m, 'acceptance.yml must trigger on pull_request');
+  assert.match(code, /^on:\n(?: {2}.*\n)*? {2}pull_request:/m, 'ci.yml must trigger on pull_request');
   assert.doesNotMatch(code, /pull_request_target/);
   assert.doesNotMatch(code, /workflow_run/, 'a workflow_run copy would run PR specs with default-branch secrets');
   // a credential is never a repository variable: variables are unmasked in logs

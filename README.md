@@ -395,9 +395,9 @@ For `auth: session` specs also set `ACCEPTANCE_USER`, `ACCEPTANCE_PASSWORD` and 
 What the checks mean:
 
 - `ci / acceptance convention` (inside `ci`, so it blocks the merge) fails a closing PR that has no spec.
-- `acceptance / acceptance specs` and `acceptance / specs` build the PR, start it on loopback with the demo data and run every spec. A spec that could not run is `not-run`, never a pass (for example, fork PRs have no build token, so `api` specs are not run there).
+- `acceptance / acceptance specs` (also republished as `acceptance / specs`) builds the PR, starts it on loopback with the demo data and runs every spec. A spec that could not run is `not-run`, never a pass (for example, fork PRs have no build token, so `api` specs are not run there), and `ci` treats `not-run` as red.
 - `acceptance / spec fails on base` runs only when the PR adds or changes a spec: it must fail on the base branch's build and pass on the PR's, since a spec that already passes proves nothing. The verdict also appears in each workflow's job summary. There is no sticky PR comment here.
-- The `acceptance` workflow runs in enforce mode but is not part of `ci`, and only `ci` is a required check, so a red result there is a signal for reviewers rather than a hard block.
+- **These block the merge.** The acceptance jobs are called from `ci.yml`, and the required `ci` check reads their results and their verdicts. A failing spec, a spec that could not run, a new spec that already passes on base (without a human-applied `spec-already-green` label) or a missing red-on-base proof turns `ci` red. They run on pull requests only, and only when the PR changes product code, the UI, a workflow or `acceptance/`: a docs-only PR skips the Maven build. The merge queue re-runs the build and tests on the queued result but not the specs.
 
 Two labels excuse the rules for one PR. Both are applied by a human only; agents never apply them. `acceptance-waived` waives the convention for a docs-only or tests-only PR (the check verifies the changed files). `spec-already-green` excuses a spec that legitimately passes on the base branch already; it never rescues a spec that fails on the PR. Apply either before pushing, or close and reopen the PR, because they are read from the event payload.
 
@@ -405,7 +405,7 @@ Two labels excuse the rules for one PR. Both are applied by a human only; agents
 
 - **Required check.** The default branch, `development`, is protected and requires the aggregate `ci` check ([`ci.yml`](.github/workflows/ci.yml)). `ci` passes when every job under it succeeded or was legitimately skipped for the files changed, so a red build, UI or script job blocks the merge.
 - **Merge queue.** `development` uses GitHub's merge queue with the merge-commit method. `ci` runs again on the queued result before it lands.
-- **Other gates.** `issue-gate` guards approvals, and the risk-tier classifier labels every PR. The `acceptance` workflow runs the specs and is not part of `ci`, so a red result there is a signal for reviewers rather than a hard block.
+- **Other gates.** `issue-gate` guards approvals, and the risk-tier classifier labels every PR. The acceptance specs run inside `ci` (see [acceptance specs](#acceptance-specs)), so a failing spec blocks the merge like a failing build.
 - **Dependabot.** [`dependabot-automerge.yml`](.github/workflows/dependabot-automerge.yml) queues single-package patch bumps and GitHub Actions non-major bumps once `ci` is green. Everything else waits for a person.
 - **What merging does.** A merge to `development` lets `promote-green` move the public demo's image tag, once `ci` has passed on that commit ([`docs/demo-deployment.md`](docs/demo-deployment.md)). `main` is only for releases and hotfixes.
 
