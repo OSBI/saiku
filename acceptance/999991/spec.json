@@ -1,0 +1,17 @@
+{
+  "issue": 999991,
+  "title": "throwaway proof: a spec that already passes on base (session login + anonymous info)",
+  "kind": "api",
+  "auth": "session",
+  "criteria": [
+    { "id": "C1", "given": "a logged in admin", "then": "GET /ai/cubes answers 200 with an array" }
+  ],
+  "steps": [
+    {
+      "name": "the cube list is an array",
+      "criterion": "C1",
+      "request": { "method": "GET", "path": "/ai/cubes" },
+      "expect": { "status": 200, "json": { "$": { "type": "array" } } }
+    }
+  ]
+}
