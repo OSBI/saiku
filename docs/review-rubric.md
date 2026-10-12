@@ -68,7 +68,10 @@ Use these in review comments so the author knows what must happen before merge.
 *Would this test suite fail if the change were reverted?*
 
 - Every behaviour change ships with a test that fails before the fix and passes
-  after. Match the stubbing style of the neighbouring tests in that package.
+  after. For a PR that closes an issue, `acceptance/<issue>/spec.json` should be
+  the first commit and `acceptance / spec fails on base` should be green or
+  `not-run`; a spec that passes on base, or a `spec-already-green` label the
+  reviewer did not see a human apply, is `blocking`. Match the stubbing style of the neighbouring tests in that package.
 - A test that asserts the implementation rather than the observable behaviour
   locks in the wrong contract. `non-blocking` unless it is actively harmful.
 - Deleting or `@Disabled`-ing a test to get green is always `blocking`. So is
