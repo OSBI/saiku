@@ -38,6 +38,46 @@ else (a test file beside a production change still has the production file), or 
 if the label were absent, and the check says which files disqualify it. The changed files are
 `git diff --name-only HEAD^1 HEAD` on the PR's merge checkout, read one path per line.
 
+### Spec first: red on base, green on head
+
+The convention gate only proves a spec **exists**. `acceptance / spec fails on base` (a job in `acceptance.yml`)
+proves it was worth writing: for every `acceptance/<issue>/spec.json` a PR **adds or changes**, the spec must
+
+1. **fail** when run against the build of the PR's **base** branch (the commit the PR is merged into), and
+2. **pass** against the PR's own build.
+
+A spec that already passes on base asserts nothing the PR changed, which is exactly what a spec written after the
+fact looks like, so it fails the check and the message names the spec. So write and commit the failing spec
+**first** (the first commit on the branch contains `acceptance/<issue>/spec.json`), watch it fail, then implement.
+A spec that tests a brand-new endpoint "fails" on base because the endpoint is missing; that is the intended red.
+
+How it runs, and what it costs:
+
+| Piece | Behaviour |
+|---|---|
+| Trigger | Only when the PR's merge checkout differs from its base in some `acceptance/*/spec.json` (a deleted spec is not checked). A PR touching no spec pays nothing: `detect` is a few seconds and the rest is skipped. |
+| Base build | `acceptance / specs on base` builds the base launcher (same Maven command as the head job) in **parallel** with `acceptance / specs`, then runs only the changed specs against it. The launcher jar is cached (`actions/cache`) on the base SHA, so a re-push to the same PR, which has the same base, skips the ~5 min build. A cache created by one PR is not visible to another PR, so the first run per PR and per base SHA pays the build. |
+| Specs and base tree | The runner and the spec files come from the PR. The code under test, and the working directory of `command` specs, come from the base checkout, with the PR's spec directories copied over it. |
+| Verdict | `acceptance / spec fails on base` waits for both runs. Per spec: **red on base and green on head** passes; **passes on base** fails; **fails on head** fails; a base run that errored or recorded nothing fails (the proof is unmade, not assumed). |
+| Forks | The Maven token is withheld from fork PRs, so the base launcher cannot be built. Api specs are `not-run` on both sides and the check reports `not-run` (a warning, green by design like `acceptance / specs`), **never** `pass`. `command` specs need no server and still run on both sides. A maintainer should re-prove a fork's specs on a same-repository branch. |
+| Security | `pull_request` only, `contents: read`, no write scope, no secret beyond the `GH_PACKAGES_TOKEN` the head job already uses. The PR's spec commands run with the same allow-listed environment as in the head job. |
+
+**Not required.** Like `acceptance / specs`, it is a separate workflow and is not in the `ci` rollup, so it reports
+red but does not by itself block a merge unless the repository's rules make it a required status check
+(not verified or assumed here; see [ci-overview.md](ci-overview.md)). Its failures reach the PR through the sticky
+`ci feedback` comment.
+
+### The escape hatch: `spec-already-green`
+
+Some specs legitimately pass on base: a regression guard for behaviour that already works, or a typo fix to an
+old spec. A **human** applies the `spec-already-green` PR label (create the label once; like `acceptance-waived`
+it is deliberate, human-applied and visible in the PR timeline, and nothing in CI applies it). With the label,
+every base-green spec in the PR is reported `excused` instead of failing, and the check output says so. The label
+never rescues a spec that fails on head. A spec field was rejected as the hatch: the PR's author (often an agent)
+would be granting its own exception inside the very file under test. The label is read from the event payload
+like `acceptance-waived`, so apply it **before** pushing or close and reopen the PR; re-running a finished job
+reuses the old payload. Agents must not apply it.
+
 ### Rollout cutoff
 
 The gate does not apply retroactively. The repository variable `ACCEPTANCE_ENFORCE_FROM_ISSUE` is an issue
@@ -53,7 +93,8 @@ announced.
 | `.github/scripts/acceptance-check.mjs` | CLI for the convention gate |
 | `.github/scripts/acceptance-runner.mjs` | CLI to execute specs and update ci-feedback.json |
 | `.github/scripts/acceptance-{check,runner}.test.mjs` | Offline unit tests (loopback HTTP server, temp dirs) |
-| `.github/workflows/acceptance.yml` | Builds the PR's launcher, starts it in the runner (FoodMart demo) and runs the specs against it |
+| `.github/scripts/acceptance-base-check.mjs` (+ `.test.mjs`) | The red-on-base, green-on-head decision; its tests also run the real runner against two loopback servers |
+| `.github/workflows/acceptance.yml` | Builds the PR's launcher, starts it in the runner (FoodMart demo) and runs the specs against it; when a spec changed, also the base-side proof |
 
 ## Spec format
 
@@ -152,6 +193,7 @@ in which every spec is `not-run` has the verdict `not-run`.
 | `SAIKU_ACCEPTANCE_USER` | repository **secret** | Specs with `auth: session` or `basic` are `not-run`. |
 | `SAIKU_ACCEPTANCE_PASSWORD` | repository **secret** | Same. A secret, never a variable: variables are unmasked in logs. |
 | `acceptance-waived` | repository **label** | The waiver cannot be applied until the label exists. |
+| `spec-already-green` | repository **label** | The escape hatch for `acceptance / spec fails on base` cannot be applied until the label exists; without it a base-green spec just fails. |
 
 Use a **low-privilege** account on a disposable or demo instance. The runner executes specs written in the PR
 under test, so a same-repository PR author can reach whatever that account can.
@@ -213,8 +255,13 @@ SAIKU_ACCEPTANCE_USER=admin SAIKU_ACCEPTANCE_PASSWORD=admin \
   node .github/scripts/acceptance-runner.mjs run --all --base-url http://localhost:8080 \
   --out /tmp/acceptance-results.json --feedback /tmp/ci-feedback.json
 
+# the red-on-base proof, from two results files and a name-status diff
+git diff --name-status origin/development...HEAD -- 'acceptance/*/spec.json' > /tmp/changed-specs.txt
+node .github/scripts/acceptance-base-check.mjs --changed /tmp/changed-specs.txt \
+  --head head-results.json --base base-results.json --labels ""
+
 # the tooling's own tests (also `ci / flake-policy tests`)
-node --test ".github/scripts/acceptance-check.test.mjs" ".github/scripts/acceptance-runner.test.mjs"
+node --test ".github/scripts/acceptance-check.test.mjs" ".github/scripts/acceptance-runner.test.mjs" ".github/scripts/acceptance-base-check.test.mjs"
 ```
 
 ## Provenance

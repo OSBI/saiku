@@ -10,7 +10,8 @@ piece has its own document, linked below, and the details live there.
 PR into development
   |-- ci ............ the only REQUIRED check (build, ui, dist, scripts, flake-policy, ...)
   |-- docker ........ builds ghcr.io/spiculedata/saiku:pr-<n> and :<7-hex sha> (same-repo, path-filtered)
-  |-- acceptance .... runs acceptance/<issue>/ specs (not required)
+  |-- acceptance .... runs acceptance/<issue>/ specs (not required); if the PR adds or changes a spec,
+  |                   also proves it fails on the base build and passes here (not required)
   |-- preview env ... optional throwaway container at oss-pr-<n>.preview.saiku.bi (tailnet only)
   '-- ci feedback ... sticky PR comment + ci-feedback.json when anything above is red
 
@@ -67,7 +68,10 @@ commands.
 - **Acceptance specs** ([acceptance-specs.md](acceptance-specs.md),
   [acceptance/README.md](../acceptance/README.md)). The gate is `ci / acceptance convention`
   inside `ci.yml`. `acceptance.yml` builds the PR's launcher, starts it in the runner and executes the specs against it, and is not
-  required: with no base URL the specs are recorded `not-run`, never `pass`.
+  required: with no base URL the specs are recorded `not-run`, never `pass`. When a PR adds or changes a
+  `spec.json`, `acceptance / spec fails on base` also demands the spec be red on the base branch's build and green on the
+  PR's (a spec that already passes on base proves nothing); only then does a second, cached, parallel Maven build run.
+  The escape hatch is the human-applied `spec-already-green` label. Not part of `ci`; fork PRs get `not-run`.
 
 ## Images and previews
 
@@ -92,7 +96,7 @@ Every file under `.github/workflows/`.
 | `ci.yml` | PR, push to `development` / `phase-*`, `merge_group` | the required `ci` check; `saiku-dist` artifact; flake records | this page, [ci-flakes.md](ci-flakes.md) |
 | `docker.yml` | push to `development` / `main`, same-repo PR (path-filtered), manual | `:development`, `:main`, `:sha-<short>`, `:pr-<n>`, SBOM + provenance | [ci-images.md](ci-images.md) |
 | `promote-green.yml` | `ci` completed on `development`, manual (rollback) | retags `sha-<short>` as `:development-green` | [demo-deployment.md](demo-deployment.md) |
-| `acceptance.yml` | PR opened / synchronised / reopened | executes `acceptance/<issue>/` specs; results artifact; feeds `ci-feedback.json` | [acceptance-specs.md](acceptance-specs.md) |
+| `acceptance.yml` | PR opened / synchronised / reopened | executes `acceptance/<issue>/` specs; results artifact; feeds `ci-feedback.json`; when a spec changed, `acceptance / spec fails on base` (red on base, green on head) | [acceptance-specs.md](acceptance-specs.md) |
 | `ci-feedback.yml` | `workflow_run` of the gating workflows | sticky PR comment, `ci-feedback.json` | [ci-feedback.md](ci-feedback.md) |
 | `flake-ledger.yml` | weekdays 05:41 UTC, manual | rolling flake rate in the job summary and an artifact | [ci-flakes.md](ci-flakes.md) |
 | `preview-env.yml` | `pull_request_target` into `development` | create / update / tear down the PR's preview | [ci-preview-environments.md](decisions/ci-preview-environments.md) |
@@ -214,6 +218,7 @@ from `acceptance.yml`, and the public demo is the only reachable instance.
 | Label | Effect |
 | --- | --- |
 | `acceptance-waived` | human-applied; waives the acceptance spec on a docs-or-tests-only PR |
+| `spec-already-green` | human-applied; excuses a changed spec that legitimately passes on the base build (`acceptance / spec fails on base`) |
 | `preview` | opts any same-repo PR into a preview environment |
 | `apply-review` | maintainer-applied; `auto-review.yml` applies review comments, then removes the label |
 | `risk/high`, `risk/medium`, `risk/low` | advisory, set by `tier-classifier.yml` |
@@ -269,6 +274,7 @@ Known gotchas:
 | PR sits in the merge queue | the `ci` run on the `gh-readonly-queue/...` ref (Actions, workflow `ci`); a failure there removes the PR from the queue |
 | Demo not updating | `promote-green` run for the commit (did `ci` or `docker` fail?), then the VM timer ([demo-deployment.md](demo-deployment.md)); manual dispatch of `promote-green` is also the rollback |
 | No preview appeared | `PREVIEW_SSH_TARGET` empty (skipped), PR not eligible, or at `PREVIEW_MAX_ENVS` and queued ([ci-preview-environments.md](decisions/ci-preview-environments.md)) |
+| `acceptance / spec fails on base` red | a spec in the PR passes on the base build (it was written after the fix, or guards behaviour that already works), fails on the PR build, or the base run did not complete. Commit the spec first so it fails without the fix; for a legitimate regression guard a human adds `spec-already-green` ([acceptance-specs.md](acceptance-specs.md)) |
 | Acceptance specs show `not-run` | a fork PR (no `GH_PACKAGES_TOKEN`, so the launcher cannot be built); this is green by design |
 | Nightly red | the `nightly-compliance` tracking issue; the OWASP lane without `NVD_API_KEY` can fail on rate limits |
 | Release job red | `release-prep` on the release branch first; see [releasing.md](releasing.md) |

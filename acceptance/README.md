@@ -9,6 +9,10 @@ changes only documentation or tests opts out with the `acceptance-waived` label,
 against the files the PR changed. The gate only applies to issues numbered at or above the repository variable
 `ACCEPTANCE_ENFORCE_FROM_ISSUE`; while it is unset nothing is enforced.
 
+Write the spec **first**: commit `acceptance/N/spec.json` before the implementation. `acceptance / spec fails on base`
+runs every spec a PR adds or changes against the base branch's build and against the PR's build, and fails one that
+already passes on base (it proves nothing). A human may excuse a legitimate exception with the `spec-already-green` label.
+
 Full format reference, assertion list, authentication and rollout: [`docs/acceptance-specs.md`](../docs/acceptance-specs.md).
 
 ## Layout

@@ -26,6 +26,15 @@ name: acceptance
 # allow-listed environment and api specs may only talk to the base URL's origin (see the
 # header of .github/scripts/acceptance-runner.mjs).
 #
+# TEST-FIRST PROOF. When a PR adds or changes an acceptance/<issue>/spec.json, three more jobs
+# run (and ONLY then; a PR that touches no spec pays nothing): `detect` finds the changed specs,
+# `base-run` builds the BASE branch's launcher (cached on the base SHA, in parallel with `specs`)
+# and runs just those specs against it, and `acceptance / spec fails on base` demands each is
+# red on base and green on head (.github/scripts/acceptance-base-check.mjs). A spec that already
+# passes on base proves nothing and fails the check, unless a human applied the
+# `spec-already-green` label. Same trust model as above: pull_request, read-only, no new secret,
+# and a fork PR (no Maven token) records the api specs `not-run`, never `pass`.
+#
 # Escape hatch: a manual run (workflow_dispatch) with `target: deployed` aims the specs at
 # the repository variable ACCEPTANCE_BASE_URL instead. Pull requests always use the local build.
 
@@ -59,6 +68,37 @@ env:
   SAIKU_ACCEPTANCE_PASSWORD: admin
 
 jobs:
+  # Cheap (seconds): which acceptance/<issue>/spec.json did this PR add or change? The checkout is the
+  # merge of the PR into its base, so HEAD^1 is the base and `git diff HEAD^1 HEAD` is the PR's change set.
+  detect:
+    name: acceptance / detect changed specs
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      has_specs: ${{ steps.diff.outputs.has_specs }}
+      issues: ${{ steps.diff.outputs.issues }}
+      base_sha: ${{ steps.diff.outputs.base_sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+      - name: Changed acceptance specs
+        id: diff
+        run: |
+          git diff --name-status HEAD^1 HEAD -- 'acceptance/*/spec.json' > "$RUNNER_TEMP/changed-specs.txt"
+          ISSUES=$(node .github/scripts/acceptance-base-check.mjs --changed "$RUNNER_TEMP/changed-specs.txt" --list)
+          echo "Changed specs: ${ISSUES:-none}"
+          {
+            echo "issues=$ISSUES"
+            echo "base_sha=$(git rev-parse HEAD^1)"
+            if [ -n "$ISSUES" ]; then echo "has_specs=true"; else echo "has_specs=false"; fi
+          } >> "$GITHUB_OUTPUT"
+
   specs:
     name: acceptance / specs
     runs-on: ubuntu-latest
@@ -199,3 +239,213 @@ jobs:
           path: ${{ runner.temp }}/launcher.log
           if-no-files-found: ignore
           retention-days: 7
+
+  # Runs ONLY the specs this PR added or changed against the BASE branch's launcher, in parallel with
+  # `specs`. The runner and the spec files come from the PR checkout (`head/`); the code under test and
+  # the working directory of command specs come from the base checkout (`base/`), with the PR's spec
+  # directories copied over it. The base launcher jar is cached on the base SHA, so a re-push to the same
+  # PR (same base) skips the ~5 min Maven build. Fork PRs have no Maven token: no build, api specs not-run.
+  base-run:
+    name: acceptance / specs on base
+    needs: detect
+    if: needs.detect.outputs.has_specs == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CHANGED_ISSUES: ${{ needs.detect.outputs.issues }}
+      BASE_SHA: ${{ needs.detect.outputs.base_sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: head
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.detect.outputs.base_sha }}
+          path: base
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+
+      - name: Put the PR's changed specs into the base tree
+        run: |
+          set -euo pipefail
+          mkdir -p base/acceptance
+          for n in $CHANGED_ISSUES; do
+            rm -rf "base/acceptance/$n"
+            cp -R "head/acceptance/$n" "base/acceptance/$n"
+          done
+
+      - name: Restore the cached base launcher
+        id: launcher-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: base-launcher-cache
+          key: acceptance-base-launcher-v1-${{ needs.detect.outputs.base_sha }}
+
+      - name: Set up JDK 22
+        if: steps.launcher-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "22"
+          cache: maven
+          cache-dependency-path: base/**/pom.xml
+
+      # Same settings.xml as the `specs` job. GH_PACKAGES_TOKEN is empty on fork PRs.
+      - name: Configure Maven settings.xml
+        if: steps.launcher-cache.outputs.cache-hit != 'true'
+        env:
+          GH_PACKAGES_USER: ${{ github.actor }}
+          GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+        run: |
+          if [ -z "${GH_PACKAGES_TOKEN}" ]; then
+            echo "::warning::GH_PACKAGES_TOKEN is not available (fork PR): the base launcher cannot be built, so the api specs are recorded not-run."
+            echo "SKIP_BUILD=true" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server><id>github-mondrian-saiku</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+              <server><id>github-olap4j</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+              <server><id>github-olap4j-xmlaserver</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+              <server><id>github-saiku-query</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+              <server><id>github-ossie</id><username>${GH_PACKAGES_USER}</username><password>${GH_PACKAGES_TOKEN}</password></server>
+            </servers>
+          </settings>
+          EOF
+
+      - name: Build the BASE launcher fat JAR
+        if: steps.launcher-cache.outputs.cache-hit != 'true' && env.SKIP_BUILD != 'true'
+        run: |
+          set -euo pipefail
+          (cd base && mvn -B -ntp -pl saiku-launcher -am -Dmaven.test.skip=true package)
+          JAR=$(ls base/saiku-launcher/target/saiku-*.jar | grep -E '/saiku-[0-9][^/]*\.jar$' | grep -Ev -- '-(sources|test-sources|tests)\.jar$' | head -n1)
+          mkdir -p base-launcher-cache
+          cp "$JAR" base-launcher-cache/
+
+      - name: Save the base launcher for re-runs on the same base
+        if: steps.launcher-cache.outputs.cache-hit != 'true' && env.SKIP_BUILD != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: base-launcher-cache
+          key: acceptance-base-launcher-v1-${{ needs.detect.outputs.base_sha }}
+
+      - name: Start the base launcher (FoodMart demo, loopback)
+        if: env.SKIP_BUILD != 'true'
+        run: |
+          set -euo pipefail
+          JAR=$(ls base-launcher-cache/saiku-*.jar | head -n1)
+          echo "Base launcher: $JAR (base $BASE_SHA)"
+          SAIKU_HOME="$RUNNER_TEMP/saiku-home-base"
+          LOG="$RUNNER_TEMP/launcher-base.log"
+          mkdir -p "$SAIKU_HOME"
+          SAIKU_DEMO=true SAIKU_TELEMETRY=off \
+            setsid nohup java -XX:+ExitOnOutOfMemoryError -jar "$JAR" serve \
+              --host 127.0.0.1 --port "$ACCEPTANCE_PORT" --home "$SAIKU_HOME" > "$LOG" 2>&1 &
+          echo $! > "$RUNNER_TEMP/launcher-base.pid"
+          URL="http://127.0.0.1:${ACCEPTANCE_PORT}"
+          for i in $(seq 1 100); do
+            if ! kill -0 "$(cat "$RUNNER_TEMP/launcher-base.pid")" 2>/dev/null; then
+              echo "::error::The base launcher exited before it was ready."; tail -n 100 "$LOG"; exit 1
+            fi
+            if [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$URL/rest/saiku/info" || true)" = "200" ]; then
+              echo "Base launcher ready after ~$((i * 3))s at $URL"
+              echo "ACCEPTANCE_BASE_URL=$URL" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::The base launcher was not ready within 5 minutes."; tail -n 100 "$LOG"; exit 1
+
+      # A spec that FAILS here is the expected outcome (exit 1 is fine); only bad input (2+) stops the job.
+      - name: Run the changed specs against the base
+        run: |
+          ARGS=()
+          for n in $CHANGED_ISSUES; do ARGS+=(--dir "acceptance/$n"); done
+          if [ -z "${ACCEPTANCE_BASE_URL:-}" ]; then
+            echo "::notice::No base server; api specs are recorded as not-run."
+          fi
+          rc=0
+          node head/.github/scripts/acceptance-runner.mjs run --repo-root base "${ARGS[@]}" \
+            --out acceptance-base-results.json || rc=$?
+          if [ "$rc" -gt 1 ]; then exit "$rc"; fi
+
+      - name: Stop the base launcher
+        if: always()
+        run: |
+          PID_FILE="$RUNNER_TEMP/launcher-base.pid"
+          [ -f "$PID_FILE" ] || exit 0
+          kill "$(cat "$PID_FILE")" 2>/dev/null || true
+          sleep 3
+          kill -9 "$(cat "$PID_FILE")" 2>/dev/null || true
+
+      - name: Upload the base-side results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: acceptance-base-results-${{ github.event.pull_request.number }}
+          path: acceptance-base-results.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload the base launcher log
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: acceptance-base-launcher-log-${{ github.event.pull_request.number }}
+          path: ${{ runner.temp }}/launcher-base.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # The proof: every spec the PR added or changed must be red on base and green on head. Read-only and
+  # cheap; waits for both builds. The PR's labels come from the event payload (like `acceptance-waived`),
+  # so a label added after the run started takes effect on the next push or a close/reopen, not a re-run.
+  spec-fails-on-base:
+    name: acceptance / spec fails on base
+    needs: [detect, specs, base-run]
+    if: always() && needs.detect.outputs.has_specs == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+      - name: Head-side results
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: acceptance-results-${{ github.event.pull_request.number }}
+          path: head-results
+      - name: Base-side results
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: acceptance-base-results-${{ github.event.pull_request.number }}
+          path: base-results
+      - name: Each changed spec is red on base and green on head
+        env:
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          BASE_JOB_RESULT: ${{ needs.base-run.result }}
+        run: |
+          git diff --name-status HEAD^1 HEAD -- 'acceptance/*/spec.json' > "$RUNNER_TEMP/changed-specs.txt"
+          rc=0
+          node .github/scripts/acceptance-base-check.mjs \
+            --changed "$RUNNER_TEMP/changed-specs.txt" \
+            --head head-results/acceptance-results.json \
+            --base base-results/acceptance-base-results.json \
+            --base-job-result "$BASE_JOB_RESULT" \
+            --labels "$PR_LABELS" \
+            --out spec-first-verdict.json > "$RUNNER_TEMP/spec-first.md" || rc=$?
+          cat "$RUNNER_TEMP/spec-first.md"
+          grep -v '^::' "$RUNNER_TEMP/spec-first.md" >> "$GITHUB_STEP_SUMMARY" || true
+          exit "$rc"
