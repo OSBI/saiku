@@ -335,6 +335,10 @@ test('the base build is cached on the base SHA and runs beside the head job, not
   assert.match(baseRun, /actions\/cache\/restore@[0-9a-f]{40}/);
   assert.match(baseRun, /actions\/cache\/save@[0-9a-f]{40}/);
   assert.match(baseRun, /key: acceptance-base-launcher-v1-\$\{\{ needs\.detect\.outputs\.base_sha \}\}/);
+  // JDK 22 must be set up even on a cache hit: the cached jar is class-file 65 and is RUN, not just built
+  const jdk = baseRun.slice(baseRun.indexOf('- name: Set up JDK 22'), baseRun.indexOf('- name: Configure Maven settings.xml'));
+  assert.match(jdk, /java-version: "22"/);
+  assert.doesNotMatch(jdk, /\bif:/, 'the JDK setup is not skipped on a cache hit');
   assert.match(baseRun, /needs: detect\n/, 'base-run waits only for detect, so it runs in parallel with specs');
   assert.doesNotMatch(baseRun, /needs:.*specs/);
 });

@@ -286,8 +286,8 @@ jobs:
           path: base-launcher-cache
           key: acceptance-base-launcher-v1-${{ needs.detect.outputs.base_sha }}
 
+      # Unconditional: a cache hit still needs JDK 22 to RUN the jar (the runner's default java is older).
       - name: Set up JDK 22
-        if: steps.launcher-cache.outputs.cache-hit != 'true'
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
