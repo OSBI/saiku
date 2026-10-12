@@ -147,7 +147,8 @@ announced.
 
 ## What is still local
 
-- **The local runner** (`acceptance-runner.mjs`, `acceptance-spec.mjs`, their tests). CI does not use them. They
+- **The local runner** (`acceptance-runner.mjs`, `acceptance-spec.mjs`, their tests). CI does not use them; the
+  thin-caller gate lists both in `allow-local-scripts` ([Guards on the wiring](#guards-on-the-wiring)). They
   stay because `acceptance/2172/check.mjs` imports them and asserts the `ci-feedback.json` `acceptance` key, which
   the shared workflows do not write. The convention logic (closing keywords, cutoff, waiver) was removed from
   `acceptance-spec.mjs` when the gate moved: it lives in acceptance-spec's `scripts/acceptance-check.mjs`.
@@ -173,22 +174,63 @@ spec-changing PR `acceptance / specs on base` logs a cache hit and skips the bas
 
 ## Bumping acceptance-spec
 
-`ci.yml` calls three workflows of `spiculedata/acceptance-spec` (`run-specs.yml`, `base-check.yml` and `convention.yml`), all
-pinned to the same **full 40-character commit SHA** of that repository's `main` (never a branch or a tag;
-`acceptance-caller.test.mjs` and `ci-wiring.test.mjs` fail otherwise). Current pin: `aaf45861ba0f0647861cf9e62108a273a6dc1ed4`.
+Five workflow calls of `spiculedata/acceptance-spec` carry the pin, all at the same **full 40-character commit SHA**
+of that repository's `main` (never a branch or a tag): `run-specs.yml`, `base-check.yml` and `convention.yml` in
+`ci.yml`, `thin-caller-gate.yml` in `thin-caller-gate.yml`, and `pin-health.yml` in `acceptance-pin-health.yml`.
+`acceptance-caller.test.mjs` and `ci-wiring.test.mjs` fail if they differ or are not full SHAs, and the
+thin-caller gate reports the same thing. The scripts the shared workflows run are fetched at exactly that SHA
+(`job.workflow_sha`), so there is no second pin to keep in step. Current pin: `e1ee02261986f510ca3be97f09b07546dd0614be`.
 To bump:
 
 1. Read what changed: `git log <old>..<new> -- scripts .github/workflows` in a checkout of acceptance-spec, and its
-   `README.md` ("Migrating from saiku's copy", inputs, trust model).
-2. Replace the SHA in the three `uses:` lines of `.github/workflows/ci.yml` and
-   in "Current pin" above (one find-and-replace over `.github/workflows` and this file).
+   `README.md` ("Migrating from saiku's copy", inputs, trust model). `acceptance-pin-health` (below) says how far behind
+   the pin is and whether `scripts/` or `.github/workflows/` changed.
+2. Replace the SHA in every `uses: spiculedata/acceptance-spec/...` line of `.github/workflows/` and in "Current pin"
+   above (one find-and-replace over `.github/workflows` and this file).
 3. Open a PR. A spec-changing PR exercises all four called jobs; check that `acceptance / acceptance specs`,
    `acceptance / detect changed specs`, `acceptance / specs on base`, `acceptance / spec fails on base` and
    `acceptance / specs` all exist and pass, and so does `ci / acceptance convention`, since other things key on
    those names (the hive label watcher reads `acceptance / specs`; `ci-feedback.mjs` keys on `ci / acceptance convention`).
+   The `thin-caller-gate` verdict should be `pass` (the PR touches `.github/workflows/`, so it scans).
 
 The called jobs' names are part of acceptance-spec's interface. If a bump renames one, either change the caller or
 update every reference listed in the PR.
+
+History: `aaf4586` to `e1ee022` changed no input or job name of `convention.yml`, `run-specs.yml` or `base-check.yml`;
+it only added the two guards below (and a README section on writing and running a spec).
+
+## Guards on the wiring
+
+Two small reusable workflows from acceptance-spec watch this repository's wiring. Neither runs any Saiku code, and
+neither is part of `ci`.
+
+- **`thin-caller-gate`** (`.github/workflows/thin-caller-gate.yml`, check `thin-caller-gate / thin-caller gate`). A static
+  check on pull requests that every acceptance-spec `uses:` is a full SHA, that they all pin the same one, that no copy of a
+  shared script (`acceptance-runner.mjs`, `acceptance-check.mjs`, `acceptance-base-check.mjs`, `acceptance-spec.mjs`,
+  `start-server.sh`, `stop-server.sh`) sits outside the `allow-local-scripts` list, and that `mode` and
+  `enforce-from-issue` are literals or `${{ vars.NAME }}`. **It runs in `mode: report`**: findings are warnings, the
+  job stays green, and the verdict (`pass`, `fail` or `skipped`) is in the job summary. It is a separate workflow, not a
+  job of `ci.yml`: it is not in the `ci` rollup, is not a required check and does not shadow `ci`. A PR that changes
+  neither `.github/workflows/` nor `acceptance/` gets a quick `skipped` verdict without scanning, so docs-only PRs do not
+  wait on it. Switch to `mode: enforce` once it has stayed clean; only then consider requiring it.
+- **`acceptance-pin-health`** (`.github/workflows/acceptance-pin-health.yml`). Mondays 07:00 UTC and on manual dispatch
+  (Actions, "acceptance-pin-health", Run workflow). Writes a job summary: commits behind acceptance-spec `main`, whether
+  `scripts/` or `.github/workflows/` changed, and the diff link. It never bumps. `open-issue` is `false`, so no tracking
+  issue is created; set it to `true` for one issue titled "acceptance-spec pin health". Its calling job holds
+  `issues: write` even so, because a called workflow cannot hold a scope its caller lacks.
+
+The gate reads every `.github/workflows/*.yml`, so adding another acceptance-spec caller means the same pin there too.
+
+Local copies the gate is told to allow, and why (one line each, mirrored in `thin-caller-gate.yml`):
+
+| Path | Why it stays |
+|---|---|
+| `.github/scripts/acceptance-runner.mjs` | Local CLI that also writes the `ci-feedback.json` `acceptance` key, which the shared runner does not; `acceptance/2172/check.mjs` exercises it. CI does not run it |
+| `.github/scripts/acceptance-spec.mjs` | Spec validation and assertions imported by the runner above and by `acceptance/2172/check.mjs`. CI does not run it |
+
+Without the allow-list the gate reports exactly these two as `local-copy` (checked against the real tree), so the list is
+honest, not a way to silence a finding. Delete an entry when its file goes (`acceptance-caller.test.mjs` fails if the
+list names a file that does not exist).
 
 ## Spec format
 

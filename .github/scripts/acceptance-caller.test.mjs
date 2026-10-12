@@ -6,7 +6,7 @@
 // `ci / flake-policy tests` (node --test ".github/scripts/*.test.mjs").
 
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
 
@@ -134,4 +134,44 @@ test('trust model: pull_request only, read-only token, the Maven token is the on
   assert.deepEqual([...new Set(secrets)], ['GH_PACKAGES_TOKEN']);
   // untrusted PR text never reaches a run: script
   assert.doesNotMatch(code, /run:[^\n]*\$\{\{\s*github\.event\.pull_request\.(title|body)/);
+});
+
+// The two guards live in their own workflow files, NOT in ci.yml: the thin-caller gate runs in report mode and
+// must not be a `ci` dependency, shadow `ci`, or make a docs-only PR wait.
+const guardCode = (file) =>
+  readFileSync(join(repoRoot, '.github', 'workflows', file), 'utf8')
+    .split('\n')
+    .filter((line) => !line.trim().startsWith('#'))
+    .join('\n');
+
+test('the guard workflows pin the SAME acceptance-spec SHA as the callers in ci.yml', () => {
+  const [ciPin] = new Set([...code.matchAll(/acceptance-spec\/\.github\/workflows\/[\w.-]+@([0-9a-f]{40})/g)].map((m) => m[1]));
+  assert.match(ciPin, /^[0-9a-f]{40}$/);
+  for (const [file, shared] of [['thin-caller-gate.yml', 'thin-caller-gate.yml'], ['acceptance-pin-health.yml', 'pin-health.yml']]) {
+    assert.match(guardCode(file), new RegExp(`uses: ${SHARED}/${shared.replace('.', '\\.')}@${ciPin}$`, 'm'), `${file} pins ${ciPin}`);
+  }
+});
+
+test('thin-caller-gate: report mode, pull_request only, read-only, not wired into ci', () => {
+  const gate = guardCode('thin-caller-gate.yml');
+  assert.match(gate, /^on:\n {2}pull_request:\n/m);
+  assert.doesNotMatch(gate, /merge_group|push:|pull_request_target|paths:/);
+  assert.match(gate, /mode: report$/m, 'report first; flipping to enforce is a deliberate change that updates this test');
+  assert.match(gate, /^permissions:\n {2}contents: read$/m);
+  assert.doesNotMatch(gate, /: write/);
+  assert.doesNotMatch(gate, /^ {4}name:/m, 'no job name: it must not be called `ci`');
+  assert.doesNotMatch(jobBlock('ci'), /thin-caller-gate/);
+  assert.doesNotMatch(code, /thin-caller-gate/, 'ci.yml does not call the gate');
+  // the allow-list names exactly the local copies that exist and are used by acceptance/2172
+  const allowed = gate.match(/allow-local-scripts: \|\n((?: {8}.+\n)+)/)[1].split('\n').map((s) => s.trim()).filter(Boolean);
+  assert.deepEqual(allowed, ['.github/scripts/acceptance-runner.mjs', '.github/scripts/acceptance-spec.mjs']);
+  for (const path of allowed) assert.ok(existsSync(join(repoRoot, path)), `${path} exists; delete the entry when the file goes`);
+});
+
+test('acceptance-pin-health: schedule and manual only, never opens an issue yet, never a PR check', () => {
+  const health = guardCode('acceptance-pin-health.yml');
+  assert.match(health, /^on:\n {2}schedule:\n {4}- cron: "[^"]+"\n {2}workflow_dispatch:\n/m);
+  assert.doesNotMatch(health, /pull_request|push:|merge_group/);
+  assert.match(health, /open-issue: false$/m);
+  assert.match(health, /^ {6}issues: write$/m, 'the caller job must hold issues: write even when open-issue is false');
 });
