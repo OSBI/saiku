@@ -12,6 +12,7 @@ jobs:
     with:
       mode: report
       skip-outside-pull-request: true
+      enforce-from-issue: "99999"
   pin-health-probe:
     permissions:
       contents: read
