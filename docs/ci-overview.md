@@ -13,6 +13,7 @@ PR into development
   |-- acceptance .... runs acceptance/<issue>/ specs (not required); if the PR adds or changes a spec,
   |                   also proves it fails on the base build and passes here (not required). The logic is
   |                   spiculedata/acceptance-spec's reusable workflows, pinned by SHA
+  |                   (ci's `ci / acceptance convention` gate is another of them)
   |-- preview env ... optional throwaway container at oss-pr-<n>.preview.saiku.bi (tailnet only)
   '-- ci feedback ... sticky PR comment + ci-feedback.json when anything above is red
 
@@ -68,7 +69,8 @@ commands.
   (read-only, job summary).
 - **Acceptance specs** ([acceptance-specs.md](acceptance-specs.md),
   [acceptance/README.md](../acceptance/README.md)). The gate is `ci / acceptance convention`
-  inside `ci.yml` (still this repository's own script). `acceptance.yml` calls the reusable workflows of
+  inside `ci.yml`, a call of acceptance-spec's `convention.yml` (same pin; Saiku's `waivable-paths`; the cutoff stays the
+  `ACCEPTANCE_ENFORCE_FROM_ISSUE` variable). `acceptance.yml` calls the reusable workflows of
   [spiculedata/acceptance-spec](https://github.com/spiculedata/acceptance-spec) at a pinned commit SHA
   ([how to bump it](acceptance-specs.md#bumping-acceptance-spec)); it builds the PR's launcher, starts it in the
   runner and executes the specs against it, and is not required: with no base URL the specs are recorded `not-run`,
@@ -154,8 +156,8 @@ What this means in `ci.yml`:
 - `merge_group: types: [checks_requested]` is a trigger. Without it the queue would wait for a
   `ci` that never starts.
 - On `merge_group` the path filter is skipped and `build`, `ui` and `dist` always run, so every
-  queued merge exercises everything. `acceptance-convention` is `pull_request`-only and reports
-  as skipped.
+  queued merge exercises everything. `acceptance-convention` is `pull_request`-only: the called job
+  skips itself (`skip-outside-pull-request`), so no bare `ci` check appears beside the real one.
 - Only the `ci` workflow runs on the `gh-readonly-queue/...` ref. `docker.yml`, `acceptance.yml`
   and the preview workflows do not, so nothing in the queue builds an image.
 
