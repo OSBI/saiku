@@ -33,6 +33,7 @@ embed-react-npm/index.d.ts
 embed-react-npm/README.md
 storybook-static/
 # Playwright artifacts
+coverage/
 test-results/
 playwright-report/
 playwright/.cache/

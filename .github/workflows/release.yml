@@ -183,28 +183,28 @@ jobs:
           ls -la release-assets/
 
       - name: Upload JAR artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: saiku-jar
           path: release-assets/${{ steps.meta.outputs.jar_name }}
           retention-days: 7
 
       - name: Upload dist zip artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: saiku-dist
           path: release-assets/${{ steps.meta.outputs.dist_name }}
           retention-days: 7
 
       - name: Upload SBOM artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: saiku-sbom
           path: release-assets/${{ steps.meta.outputs.sbom_name }}
           retention-days: 7
 
       - name: Upload UI SBOM artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: saiku-ui-sbom
           path: release-assets/${{ steps.meta.outputs.ui_sbom_name }}
@@ -552,13 +552,13 @@ jobs:
           fi
           echo "publishing embed npm line at $BASE (embed-npm=$BASE embed-react-npm=$REACT dep=$REACT_DEP)"
       - name: Upload embed base package
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: embed-npm-pkg
           path: saiku-ui/embed-npm
           retention-days: 7
       - name: Upload embed React package
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: embed-react-pkg
           path: saiku-ui/embed-react-npm

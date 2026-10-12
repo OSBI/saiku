@@ -118,7 +118,7 @@ jobs:
           } > quality-java.md
           cat quality-java.md
       - name: Upload Java report fragment
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: quality-java
           path: quality-java.md
@@ -203,7 +203,7 @@ jobs:
           } > ../quality-ui.md
           cat ../quality-ui.md
       - name: Upload UI report fragment
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: quality-ui
           path: quality-ui.md
@@ -283,7 +283,7 @@ jobs:
             --out quality-escaped-defects.md
           cat quality-escaped-defects.md
       - name: Upload escaped-defect fragment
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: quality-escaped-defects
           path: quality-escaped-defects.md
@@ -342,7 +342,7 @@ jobs:
           cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
       - name: Archive dashboard
         # Also kept as an artifact so successive weekly runs can be diffed.
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: quality-report
           path: quality-report-*.md
