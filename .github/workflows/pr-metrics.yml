@@ -55,6 +55,8 @@ jobs:
       # `gh pr list --json` is the supported shape; the script tolerates both a
       # bare array and a {pullRequests:[...]} wrapper.
       - name: Collect pull requests
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr list \
             --state all \
