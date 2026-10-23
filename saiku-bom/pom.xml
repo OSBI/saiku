@@ -98,11 +98,12 @@
                 <version>1.3.1</version>
             </dependency>
             <!-- postgresql 9.3 (2014) had ~10 open CVEs. 42.7.x is the
-                 maintained JDBC4-driver line; pure-API drop-in. -->
+                 maintained JDBC4-driver line; pure-API drop-in. 42.7.14 fixes
+                 CVE-2026-107315 (cross-request byte leak). -->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>42.7.12</version>
+                <version>42.7.14</version>
             </dependency>
             <!-- quack-jdbc: JDBC driver for DuckDB's native Quack client-server
                  protocol (jdbc:quack://). Lets Ossie warehouses target a remote
